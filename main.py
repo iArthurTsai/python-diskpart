@@ -174,6 +174,20 @@ class diskpart:
 				raise ValueError("Expected string as input but got '{}' instead.".format(type(partition)))
 		else:
 			raise Exception("You need to select a disk before using this function.")
+	def assignLetter(self, letter):
+	if type(self.selected) != int:
+		raise Exception("You need to select a disk before assigning a letter.")
+	if type(self.selectedPart) != int:
+		raise Exception("You need to select a partition before assigning a letter.")
+	
+	if not isinstance(letter, str) or len(letter) != 1 or not letter.isalpha():
+		raise ValueError("Expected a single alphabetical letter, got '{}' instead.".format(letter))
+	
+	cmd = "select disk {}\r\nselect partition {}\r\nassign letter={}".format(
+		self.selected, self.selectedPart, letter.upper()
+	)
+	self.write(cmd)
+	self.exec(self.mainC)
 	def selectDisk(self, diskNum):
 		try:
 			int(diskNum)
