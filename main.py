@@ -186,6 +186,27 @@ class diskpart:
 	)
 	self.write(cmd)
 	self.exec(self.mainC)
+	def SetMBRPartitionActive(self):
+		if type(self.selected) != int:
+			raise Exception("You need to select a disk before setting partition active.")
+		if type(self.selectedPart) != int:
+			raise Exception("You need to select a partition before setting it active.")
+		self.write(f"select disk {self.selected}\r\n")
+		self.write("detail disk\r\n")
+		output = self.exec(self.mainC)
+		if "GPT" in output:
+			print(f"Disk {self.selected} is GPT, skipping 'active' command.")
+			return
+		else:
+			print(f"Disk {self.selected} is MBR, setting partition active.")
+		commands = [
+			f"select disk {self.selected}",
+			f"select partition {self.selectedPart}",
+			"active"
+		]
+		cmd = "\r\n".join(commands)
+		self.write(cmd)
+		self.exec(self.mainC)
 	def formatPartition(self, fs="exfat", label=None, quick=False):
 		if type(self.selected) != int:
 			raise Exception("You need to select a disk before formatting.")
