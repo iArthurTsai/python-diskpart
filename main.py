@@ -156,6 +156,13 @@ class diskpart:
 			self.exec(self.mainC)
 		else:
 			raise Exception("You need to select a disk before using this function.")
+	def convertGPT(self):
+		if type(self.selected) == int:
+			cmd = "select disk {}\r\nconvert gpt".format(self.selected)
+			self.write(cmd)
+			self.exec(self.mainC)
+		else:
+			raise Exception("You need to select a disk before using this function.")
 	def createPartition(self, partition):
 		if type(self.selected) == int:
 			if partition and type(partition) == str:
