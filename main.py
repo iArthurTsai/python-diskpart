@@ -184,6 +184,31 @@ class diskpart:
 				self.selected = diskNum
 			else:
 				raise Exception("Selected '{}' disk is not present.".format(diskNum))
+	def selectPartition(self, partitionNum=None):
+	if type(self.selected) != int:
+		raise Exception("You need to select a disk before selecting a partition.")
+	
+	if not self.disks[self.selected].get("partitions"):
+		self.listPartition()
+
+	partitions = self.disks[self.selected]["partitions"]
+	if not partitions:
+		raise Exception("No partitions found on selected disk.")
+
+	if partitionNum is None:
+		# 自動選擇第一個磁碟分割
+		self.selectedPart = list(partitions.keys())[0]
+	else:
+		try:
+			partitionNum = int(partitionNum)
+		except:
+			raise ValueError("Expected integer as input but got '{}' instead.".format(partitionNum))
+		
+		if partitionNum in partitions:
+			self.selectedPart = partitionNum
+		else:
+			raise Exception("Selected partition '{}' is not present on disk {}.".format(partitionNum, self.selected))
+
 	def lister(self, template, data):
 		lastVal = 0
 		totalLen = 0
