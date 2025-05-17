@@ -196,6 +196,19 @@ class diskpart:
 		fs = fs.lower()
 		if fs not in ["exfat", "ntfs", "fat32"]:
 			raise ValueError(f"Invalid filesystem type: {fs}")
+		if label:
+			try:
+				encoded = label.encode("utf-8")
+				if len(encoded) > 11:
+					truncated = b""
+					for b in encoded:
+						if len(truncated) + len(bytes([b])) > 11:
+							break
+						truncated += bytes([b])
+					label = truncated.decode("utf-8", errors="ignore")
+					print(f"⚠️ The maximum length for the volume name is 11 characters，and it is automatically truncated to: {label}")
+			except Exception as e:
+				raise Exception(f"An error occurred while processing the volume name：{e}")
 		commands = [
 			f"select disk {self.selected}",
 			f"select partition {self.selectedPart}",
