@@ -174,39 +174,6 @@ class diskpart:
 				raise ValueError("Expected string as input but got '{}' instead.".format(type(partition)))
 		else:
 			raise Exception("You need to select a disk before using this function.")
-	def assignLetter(self, letter):
-		if type(self.selected) != int:
-			raise Exception("You need to select a disk before assigning a letter.")
-		if type(self.selectedPart) != int:
-			raise Exception("You need to select a partition before assigning a letter.")
-		if not isinstance(letter, str) or len(letter) != 1 or not letter.isalpha():
-			raise ValueError("Expected a single alphabetical letter, got '{}' instead.".format(letter))
-		cmd = "select disk {}\r\nselect partition {}\r\nassign letter={}".format(
-			self.selected, self.selectedPart, letter.upper()
-		)
-		self.write(cmd)
-		self.exec(self.mainC)
-	def SetMBRPartitionActive(self):
-		if type(self.selected) != int:
-			raise Exception("You need to select a disk before setting partition active.")
-		if type(self.selectedPart) != int:
-			raise Exception("You need to select a partition before setting it active.")
-		self.write(f"select disk {self.selected}\r\n")
-		self.write("detail disk\r\n")
-		output = self.exec(self.mainC)
-		if "GPT" in output:
-			print(f"Disk {self.selected} is GPT, skipping 'active' command.")
-			return
-		else:
-			print(f"Disk {self.selected} is MBR, setting partition active.")
-		commands = [
-			f"select disk {self.selected}",
-			f"select partition {self.selectedPart}",
-			"active"
-		]
-		cmd = "\r\n".join(commands)
-		self.write(cmd)
-		self.exec(self.mainC)
 	def formatPartition(self, fs="exfat", label=None, quick=False):
 		if type(self.selected) != int:
 			raise Exception("You need to select a disk before formatting.")
@@ -238,6 +205,39 @@ class diskpart:
 		if quick:
 			commands[-1] += " quick"
 		cmd = "\r\n".join(commands)
+		self.write(cmd)
+		self.exec(self.mainC)
+	def SetMBRPartitionActive(self):
+		if type(self.selected) != int:
+			raise Exception("You need to select a disk before setting partition active.")
+		if type(self.selectedPart) != int:
+			raise Exception("You need to select a partition before setting it active.")
+		self.write(f"select disk {self.selected}\r\n")
+		self.write("detail disk\r\n")
+		output = self.exec(self.mainC)
+		if "GPT" in output:
+			print(f"Disk {self.selected} is GPT, skipping 'active' command.")
+			return
+		else:
+			print(f"Disk {self.selected} is MBR, setting partition active.")
+		commands = [
+			f"select disk {self.selected}",
+			f"select partition {self.selectedPart}",
+			"active"
+		]
+		cmd = "\r\n".join(commands)
+		self.write(cmd)
+		self.exec(self.mainC)
+	def assignLetter(self, letter):
+		if type(self.selected) != int:
+			raise Exception("You need to select a disk before assigning a letter.")
+		if type(self.selectedPart) != int:
+			raise Exception("You need to select a partition before assigning a letter.")
+		if not isinstance(letter, str) or len(letter) != 1 or not letter.isalpha():
+			raise ValueError("Expected a single alphabetical letter, got '{}' instead.".format(letter))
+		cmd = "select disk {}\r\nselect partition {}\r\nassign letter={}".format(
+			self.selected, self.selectedPart, letter.upper()
+		)
 		self.write(cmd)
 		self.exec(self.mainC)
 	def selectDisk(self, diskNum):
