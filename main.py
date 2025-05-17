@@ -188,6 +188,26 @@ class diskpart:
 	)
 	self.write(cmd)
 	self.exec(self.mainC)
+	def formatPartition(self, fs="exfat", label=None, quick=False):
+		if type(self.selected) != int:
+			raise Exception("You need to select a disk before formatting.")
+		if type(self.selectedPart) != int:
+			raise Exception("You need to select a partition before formatting.")
+		fs = fs.lower()
+		if fs not in ["exfat", "ntfs", "fat32"]:
+			raise ValueError(f"Invalid filesystem type: {fs}")
+		commands = [
+			f"select disk {self.selected}",
+			f"select partition {self.selectedPart}",
+			f"format fs={fs}"
+		]
+		if label:
+			commands[-1] += f' label="{label}"'
+		if quick:
+			commands[-1] += " quick"
+		cmd = "\r\n".join(commands)
+		self.write(cmd)
+		self.exec(self.mainC)
 	def selectDisk(self, diskNum):
 		try:
 			int(diskNum)
