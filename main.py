@@ -271,20 +271,23 @@ class diskpart:
 			else:
 				raise Exception("Selected partition '{}' is not present on disk {}.".format(partitionNum, self.selected))
 	def lister(self, template, data):
-		lastVal = 0
-		totalLen = 0
-		partNum = 0
-		parts = {}
-		for i in template:
-			if i == "-":
-				if lastVal == 0:
-					parts[partNum] = {"begin": totalLen}
-				lastVal = 1
-			else:
-				if lastVal == 1:
-					parts[partNum]["end"] = totalLen
-					partNum += 1
-				lastVal = 0
-			totalLen +=1
-		parts[len(parts)-1]["end"] = totalLen
-		return parts
+                lastVal = 0
+                totalLen = 0
+                partNum = 0
+                parts = {}
+                for i in template:
+                        if i == "-":
+                                if lastVal == 0:
+                                        parts[partNum] = {"begin": totalLen}
+                                lastVal = 1
+                        else:
+                                if lastVal == 1:
+                                        parts[partNum]["end"] = totalLen
+                                        partNum += 1
+                                lastVal = 0
+                        totalLen += 1
+                # 如果最后还在 dash 區段（例如 template 結尾是連續的 "-"）
+                if lastVal == 1 and partNum in parts and "end" not in parts[partNum]:
+                        parts[partNum]["end"] = totalLen
+                return parts
+
