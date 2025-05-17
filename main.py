@@ -175,17 +175,17 @@ class diskpart:
 		else:
 			raise Exception("You need to select a disk before using this function.")
 	def assignLetter(self, letter):
-	if type(self.selected) != int:
-		raise Exception("You need to select a disk before assigning a letter.")
-	if type(self.selectedPart) != int:
-		raise Exception("You need to select a partition before assigning a letter.")
-	if not isinstance(letter, str) or len(letter) != 1 or not letter.isalpha():
-		raise ValueError("Expected a single alphabetical letter, got '{}' instead.".format(letter))
-	cmd = "select disk {}\r\nselect partition {}\r\nassign letter={}".format(
-		self.selected, self.selectedPart, letter.upper()
-	)
-	self.write(cmd)
-	self.exec(self.mainC)
+		if type(self.selected) != int:
+			raise Exception("You need to select a disk before assigning a letter.")
+		if type(self.selectedPart) != int:
+			raise Exception("You need to select a partition before assigning a letter.")
+		if not isinstance(letter, str) or len(letter) != 1 or not letter.isalpha():
+			raise ValueError("Expected a single alphabetical letter, got '{}' instead.".format(letter))
+		cmd = "select disk {}\r\nselect partition {}\r\nassign letter={}".format(
+			self.selected, self.selectedPart, letter.upper()
+		)
+		self.write(cmd)
+		self.exec(self.mainC)
 	def SetMBRPartitionActive(self):
 		if type(self.selected) != int:
 			raise Exception("You need to select a disk before setting partition active.")
@@ -251,25 +251,25 @@ class diskpart:
 			else:
 				raise Exception("Selected '{}' disk is not present.".format(diskNum))
 	def selectPartition(self, partitionNum=None):
-	if type(self.selected) != int:
-		raise Exception("You need to select a disk before selecting a partition.")
-	if not self.disks[self.selected].get("partitions"):
-		self.listPartition()
-	partitions = self.disks[self.selected]["partitions"]
-	if not partitions:
-		raise Exception("No partitions found on selected disk.")
-	if partitionNum is None:
-		# Automatically select the first partition
-		self.selectedPart = list(partitions.keys())[0]
-	else:
-		try:
-			partitionNum = int(partitionNum)
-		except:
-			raise ValueError("Expected integer as input but got '{}' instead.".format(partitionNum))
-		if partitionNum in partitions:
-			self.selectedPart = partitionNum
+		if type(self.selected) != int:
+			raise Exception("You need to select a disk before selecting a partition.")
+		if not self.disks[self.selected].get("partitions"):
+			self.listPartition()
+		partitions = self.disks[self.selected]["partitions"]
+		if not partitions:
+			raise Exception("No partitions found on selected disk.")
+		if partitionNum is None:
+			# Automatically select the first partition
+			self.selectedPart = list(partitions.keys())[0]
 		else:
-			raise Exception("Selected partition '{}' is not present on disk {}.".format(partitionNum, self.selected))
+			try:
+				partitionNum = int(partitionNum)
+			except:
+				raise ValueError("Expected integer as input but got '{}' instead.".format(partitionNum))
+			if partitionNum in partitions:
+				self.selectedPart = partitionNum
+			else:
+				raise Exception("Selected partition '{}' is not present on disk {}.".format(partitionNum, self.selected))
 	def lister(self, template, data):
 		lastVal = 0
 		totalLen = 0
