@@ -224,7 +224,7 @@ def run_step_chain(steps, index=0):
 
 # --- GUI 建構 ---
 root = tk.Tk()
-root.title("USB 格式化工具")
+root.title("Disk Utility")
 root.geometry("800x800")
 
 # 顯示磁碟資訊區域
