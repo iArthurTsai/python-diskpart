@@ -225,6 +225,7 @@ def run_step_chain(steps, index=0):
 # --- GUI 建構 ---
 root = tk.Tk()
 root.title("Disk Utility")
+root.iconbitmap('Disk Utility.ico')
 root.geometry("800x800")
 
 # 顯示磁碟資訊區域
