@@ -176,10 +176,16 @@ def formatCmd():
         label = ""
 
     # 根據是否勾選快速格式化決定是否加上 quick
-    if quick_var.get():
-        format_cmd = f'format fs={fs_cmd} label=\"{label}\" quick'
+    if label:
+        if quick_var.get():
+            format_cmd = f'format fs={fs_cmd} label="{label}" quick'
+        else:
+            format_cmd = f'format fs={fs_cmd} label="{label}"'
     else:
-        format_cmd = f'format fs={fs_cmd} label=\"{label}\"'
+        if quick_var.get():
+            format_cmd = f'format fs={fs_cmd} quick'
+        else:
+            format_cmd = f'format fs={fs_cmd}'
 
     # 組合指令
     commands = [f"select disk {diskNum}", "select partition 1", format_cmd]
