@@ -25,6 +25,10 @@ if not is_admin():
     sys.exit()
 
 # --- 初始化 ---
+if hasattr(sys, '_MEIPASS'):
+    icon_path = os.path.join(sys._MEIPASS, 'Disk Utility.ico')
+else:
+    icon_path = 'Disk Utility.ico'
 TEMP_DIR = os.path.dirname(os.path.abspath(__file__))
 DISKPART_OUTPUT = os.path.join(TEMP_DIR, "diskpart_output.txt")
 
@@ -231,7 +235,7 @@ def run_step_chain(steps, index=0):
 # --- GUI 建構 ---
 root = tk.Tk()
 root.title("Disk Utility")
-root.iconbitmap('Disk Utility.ico')
+root.iconbitmap(icon_path)
 root.geometry("800x800")
 
 # 顯示磁碟資訊區域
