@@ -2,6 +2,7 @@ import os
 import ctypes
 import sys
 import subprocess
+#import re
 import tkinter as tk
 from tkinter import ttk, messagebox, font
 
@@ -100,15 +101,71 @@ def listVolume():
         f.write("list volume\n")
     result = subprocess.run(["diskpart", "/s", script_path], capture_output=True, text=True).stdout
     os.remove(script_path)
-    return result
+
+    valid_volumes = []
+    parsing = False
+    for line in result.splitlines():
+        if "###" in line:
+            parsing = True  # 從這行之後開始解析
+            continue
+        if parsing:
+            parts = line.strip().split()
+            if len(parts) >= 2:
+                # 通常磁碟區編號在第2欄，可能是 "0"、"1"...
+                volume_num = parts[1]
+                if volume_num.isdigit():
+                    valid_volumes.append(volume_num)
+                    
+    print("可用的磁碟區編號：", valid_volumes)
+    return result, valid_volumes  # 回傳原始輸出與可用編號
+
+def listLetter():
+    script_path = os.path.join(TEMP_DIR, "list_volume.txt")
+    with open(script_path, "w") as f:
+        f.write("list volume\n")
+    result = subprocess.run(["diskpart", "/s", script_path], capture_output=True, text=True).stdout
+    os.remove(script_path)
+    
+    valid_letters = []
+    parsing = False
+    #for line in result.splitlines():
+        #line = line.strip()
+        #if not line:
+            #continue
+        #if "###" in line:
+            #parsing = True
+            #continue
+        #if parsing:
+            #parts = line.split()
+            #if len(parts) >= 2:
+                #letter_candidate = parts[2]
+                #if re.fullmatch(r"[A-Z]", letter_candidate.upper()):
+                    #valid_letters.append(letter_candidate.upper())
+
+    for line in result.splitlines():
+        if "###" in line:
+            parsing = True  # 從這行之後開始解析
+            continue
+        if parsing:
+            parts = line.strip().split()
+            if len(parts) >= 2:
+                # 通常磁碟機代號在第3欄，可能是 "C"、"D"...
+                letter_candidate = parts[2]
+                if letter_candidate.isalpha() and len(letter_candidate) == 1:
+                    valid_letters.append(letter_candidate.upper())
+                    
+    print("letter already assigned：", valid_letters)
+    return result, valid_letters  # 回傳原始輸出與不可用代號
 
 # --- 更新顯示區域 ---
 def refreshLists():
     disk_output, _ = listDisk()
     disk_text.delete(1.0, tk.END)
     disk_text.insert(tk.END, disk_output)
+    volume_output, _ = listVolume()
     volume_text.delete(1.0, tk.END)
-    volume_text.insert(tk.END, listVolume())
+    volume_text.insert(tk.END, volume_output)
+    _, valid_letters = listLetter()
 
     if os.path.exists(DISKPART_OUTPUT):
         os.remove(DISKPART_OUTPUT)
@@ -133,7 +190,6 @@ def getInput():
     # 確認磁碟編號是否存在
     try:
         _, valid_disks = listDisk()  # 忽略原始輸出，只取磁碟編號清單
-        print("可用的磁碟編號：", valid_disks)
         if diskNum not in valid_disks:
             messagebox.showerror("錯誤", f"磁碟編號 {diskNum} 不存在！請重新輸入。")
             return None
@@ -157,7 +213,17 @@ def getInput():
         messagebox.showerror("錯誤", "請輸入磁碟機代號")
         return None
     elif not letter.isalpha() or len(letter) != 1:
-        messagebox.showerror("錯誤", "磁碟機代號應為一個英文字母")
+        messagebox.showerror("錯誤", "磁碟機代號應為 A~Z 的單一字母")
+        return None
+
+    # 確認磁碟機代號是否存在
+    try:
+        _, valid_letters = listLetter()  # 忽略原始輸出，只取磁碟機代號清單
+        if letter in valid_letters:
+            messagebox.showerror("錯誤", f"磁碟機代號 {letter} 已指派！請重新輸入。")
+            return None
+    except Exception as e:
+        messagebox.showerror("錯誤", f"無法驗證磁碟機代號是否存在：\n{e}")
         return None
 
     clean_cmd = clean_map.get(clean_key)
@@ -251,9 +317,6 @@ def assignLetter():
     if not values:
         return False
     diskNum, label, letter, clean_cmd, convert_cmd, fs_cmd, quick = values
-    
-    # 自動轉成大寫
-    letter = letter.upper()
     run_diskpart([f"select disk {diskNum}", "select partition 1", f"assign letter={letter}"], append=True)
     return showOutput()
 
