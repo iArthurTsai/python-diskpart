@@ -126,6 +126,9 @@ def getInput():
     if not diskNum:
         messagebox.showerror("錯誤", "請輸入磁碟編號")
         return None
+    elif not diskNum.isdigit():
+        messagebox.showerror("錯誤", "磁碟編號為數字")
+        return None
 
     # 確認磁碟編號是否存在
     try:
@@ -137,7 +140,6 @@ def getInput():
     except Exception as e:
         messagebox.showerror("錯誤", f"無法驗證磁碟編號是否存在：\n{e}")
         return None
-
 
     if not clean_key:
         messagebox.showerror("錯誤", "請選擇清除方式")
@@ -153,6 +155,9 @@ def getInput():
 
     if not letter:
         messagebox.showerror("錯誤", "請輸入磁碟機代號")
+        return None
+    elif not letter.isalpha() or len(letter) != 1:
+        messagebox.showerror("錯誤", "磁碟機代號應為一個英文字母")
         return None
 
     clean_cmd = clean_map.get(clean_key)
@@ -246,9 +251,9 @@ def assignLetter():
     if not values:
         return False
     diskNum, label, letter, clean_cmd, convert_cmd, fs_cmd, quick = values
-    if not letter.isalpha() or len(letter) != 1:
-        messagebox.showerror("錯誤", "磁碟機代號應為一個英文大寫字母")
-        return False
+    
+    # 自動轉成大寫
+    letter = letter.upper()
     run_diskpart([f"select disk {diskNum}", "select partition 1", f"assign letter={letter}"], append=True)
     return showOutput()
 
@@ -269,7 +274,6 @@ def run_step_chain(steps, index=0):
         root.after(100, lambda: run_step_chain(steps, index + 1))
     else:
         root.after(100, lambda: run_step_chain(steps, index))
-
 
 # --- GUI 建構 ---
 root = tk.Tk()
@@ -299,17 +303,17 @@ disk_entry.grid(row=0, column=1)
 
 ttk.Label(form_frame, text="清除方式").grid(row=1, column=0)
 clean_var = tk.StringVar()
-ttk.Combobox(form_frame, textvariable=clean_var, values=["", "Clean", "Clean All"], width=10).grid(row=1, column=1)
+ttk.Combobox(form_frame, textvariable=clean_var, values=["", "Clean", "Clean All"], width=10, state="readonly").grid(row=1, column=1)
 ttk.Label(form_frame, text="Clean/Clean All").grid(row=1, column=2)
 
 ttk.Label(form_frame, text="磁碟架構").grid(row=2, column=0)
 part_var = tk.StringVar()
-ttk.Combobox(form_frame, textvariable=part_var, values=["", "MBR", "GPT"], width=10).grid(row=2, column=1)
+ttk.Combobox(form_frame, textvariable=part_var, values=["", "MBR", "GPT"], width=10, state="readonly").grid(row=2, column=1)
 ttk.Label(form_frame, text="MBR/GPT").grid(row=2, column=2)
 
 ttk.Label(form_frame, text="檔案系統格式").grid(row=3, column=0)
 fs_var = tk.StringVar()
-ttk.Combobox(form_frame, textvariable=fs_var, values=["", "exFAT", "NTFS", "FAT32"], width=10).grid(row=3, column=1)
+ttk.Combobox(form_frame, textvariable=fs_var, values=["", "exFAT", "NTFS", "FAT32"], width=10, state="readonly").grid(row=3, column=1)
 ttk.Label(form_frame, text="exFAT/NTFS/FAT32").grid(row=3, column=2)
 
 ttk.Label(form_frame, text="格式化方式").grid(row=4, column=0)
