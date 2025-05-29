@@ -55,11 +55,13 @@ def show():
     with open(DISKPART_OUTPUT, "r", encoding="utf-8") as f:
         tail = f.read()[-400:]
     return messagebox.showinfo("分段執行結果", f"{tail}\n繼續下一步？\n請按下一個按鈕或重新執行這個步驟")
-
+    refreshLists()
+    
 def showOutput():
     with open(DISKPART_OUTPUT, "r", encoding="utf-8") as f:
         tail = f.read()[-400:]
     return messagebox.askyesno("執行結果", f"{tail}\n是否繼續下一步？\n「是」，進行下一步;「否」，重新執行這個步驟")
+    refreshLists()
 
 # --- 取得磁碟與磁碟區清單 ---
 def listDisk():
@@ -68,7 +70,29 @@ def listDisk():
         f.write("list disk\n")
     result = subprocess.run(["diskpart", "/s", script_path], capture_output=True, text=True).stdout
     os.remove(script_path)
-    return result
+
+    valid_disks = []
+    #for line in result.splitlines():
+        #if line.strip().startswith("磁碟"):
+            #parts = line.split()
+            #if len(parts) > 1 and parts[1].isdigit():
+                #valid_disks.append(parts[1])
+
+    parsing = False
+    for line in result.splitlines():
+        if "###" in line:
+            parsing = True  # 從這行之後開始解析
+            continue
+        if parsing:
+            parts = line.strip().split()
+            if len(parts) >= 2:
+                # 通常磁碟編號在第2欄，可能是 "0"、"1"...
+                disk_num = parts[1]
+                if disk_num.isdigit():
+                    valid_disks.append(disk_num)
+                    
+    print("可用的磁碟編號：", valid_disks)
+    return result, valid_disks  # 回傳原始輸出與可用編號
 
 def listVolume():
     script_path = os.path.join(TEMP_DIR, "list_volume.txt")
@@ -80,8 +104,9 @@ def listVolume():
 
 # --- 更新顯示區域 ---
 def refreshLists():
+    disk_output, _ = listDisk()
     disk_text.delete(1.0, tk.END)
-    disk_text.insert(tk.END, listDisk())
+    disk_text.insert(tk.END, disk_output)
     volume_text.delete(1.0, tk.END)
     volume_text.insert(tk.END, listVolume())
 
@@ -101,6 +126,18 @@ def getInput():
     if not diskNum:
         messagebox.showerror("錯誤", "請輸入磁碟編號")
         return None
+
+    # 確認磁碟編號是否存在
+    try:
+        _, valid_disks = listDisk()  # 忽略原始輸出，只取磁碟編號清單
+        print("可用的磁碟編號：", valid_disks)
+        if diskNum not in valid_disks:
+            messagebox.showerror("錯誤", f"磁碟編號 {diskNum} 不存在！請重新輸入。")
+            return None
+    except Exception as e:
+        messagebox.showerror("錯誤", f"無法驗證磁碟編號是否存在：\n{e}")
+        return None
+
 
     if not clean_key:
         messagebox.showerror("錯誤", "請選擇清除方式")
@@ -219,10 +256,12 @@ def run_step_chain(steps, index=0):
     # 先檢查輸入是否有效
     if not getInput():
         messagebox.showinfo("停止", "請先填寫完欄位。")
+        refreshLists()
         return
 
     if index >= len(steps):
         messagebox.showinfo("完成", "所有步驟皆已完成。")
+        refreshLists()
         return
 
     success = steps[index]()
