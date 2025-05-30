@@ -157,8 +157,37 @@ def listLetter():
     print("letter already assigned：", valid_letters)
     return result, valid_letters  # 回傳原始輸出與不可用代號
 
+def listPartition():
+    diskNum = disk_entry.get().strip()
+    if not diskNum:
+        return "請輸入磁碟編號", []
+    script_path = os.path.join(TEMP_DIR, "list_partition.txt")
+    with open(script_path, "w") as f:
+        f.write(f"select disk {diskNum}\n")
+        f.write("list partition\n")
+    result = subprocess.run(["diskpart", "/s", script_path], capture_output=True, text=True).stdout
+    os.remove(script_path)
+
+    valid_partitions = []
+    parsing = False
+    for line in result.splitlines():
+        if "###" in line:
+            parsing = True  # 從這行之後開始解析
+            continue
+        if parsing:
+            parts = line.strip().split()
+            if len(parts) >= 2:
+                # 通常磁碟分割在第2欄，可能是 "1"、"2"...
+                partition_num = parts[1]
+                if partition_num.isdigit():
+                    valid_partitions.append(partition_num)
+                    
+    print("可用的磁碟分割編號：", valid_partitions)
+    return result, valid_partitions  # 回傳原始輸出與可用編號
+
 # --- 更新顯示區域 ---
 def refreshLists():
+    run_diskpart([f"rescan"])
     disk_output, _ = listDisk()
     disk_text.delete(1.0, tk.END)
     disk_text.insert(tk.END, disk_output)
@@ -166,6 +195,9 @@ def refreshLists():
     volume_text.delete(1.0, tk.END)
     volume_text.insert(tk.END, volume_output)
     _, valid_letters = listLetter()
+    partition_output, _ = listPartition()
+    partition_text.delete(1.0, tk.END)
+    partition_text.insert(tk.END, partition_output)
 
     if os.path.exists(DISKPART_OUTPUT):
         os.remove(DISKPART_OUTPUT)
@@ -220,7 +252,7 @@ def getInput():
     try:
         _, valid_letters = listLetter()  # 忽略原始輸出，只取磁碟機代號清單
         if letter in valid_letters:
-            messagebox.showerror("錯誤", f"磁碟機代號 {letter} 已指派！請重新輸入。")
+            messagebox.showerror("錯誤", f"磁碟機代號 {letter} 已指派至其他磁碟機！請重新輸入。")
             return None
     except Exception as e:
         messagebox.showerror("錯誤", f"無法驗證磁碟機代號是否存在：\n{e}")
@@ -398,6 +430,10 @@ letter_entry.grid(row=6, column=1)
 #ttk.Button(root, text="格式化", command=formatCmd).pack(pady=2)
 #ttk.Button(root, text="指派磁碟機代號", command=assignLetter).pack(pady=2)
 
+tk.Label(root, text="磁碟分割清單（Partition）").pack()
+partition_text = tk.Text(root, height=11, bg="#1e1e1e", fg="#00ff00")
+partition_text.pack(fill="x", padx=10)
+
 # 自動引導流程按鈕:
 ttk.Button(root, text="格式化磁碟", command=lambda: run_step_chain([clean, convert, partition, formatCmd, assignLetter])).pack(pady=2)
 
@@ -405,7 +441,7 @@ refreshLists()
 root.mainloop()
 
 # --- 清理臨時檔案 ---
-for filename in ["diskpart_script.txt", "list_disk.txt", "list_volume.txt"]:
+for filename in ["diskpart_script.txt", "list_disk.txt", "list_volume.txt", "list_partition.txt"]:
     path = os.path.join(TEMP_DIR, filename)
     if os.path.exists(path):
         os.remove(path)
