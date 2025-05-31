@@ -354,7 +354,7 @@ def assignLetter():
 
 def run_step_chain(steps, index=0):
     # 先檢查輸入是否有效
-    if not getInput():
+    if index == 0 and not getInput():
         messagebox.showinfo("停止", "請先填寫完欄位。")
         refreshLists()
         return
@@ -378,7 +378,7 @@ root.iconbitmap(icon_path)
 window_width = root.winfo_screenwidth()    # 取得螢幕寬度
 window_height = root.winfo_screenheight()  # 取得螢幕高度
 
-width = 600
+width = 650
 height = 750
 root.minsize(width, height)    # 設定視窗最小值
 left = int((window_width - width)/2)       # 計算左上 x 座標
@@ -386,11 +386,11 @@ top = int((window_height - height)/2)      # 計算左上 y 座標
 root.geometry(f'{width}x{height}+{left}+{top}')
 
 # 顯示磁碟資訊區域
-tk.Label(root, text="磁碟清單（Disk）").pack()
+ttk.Label(root, text="磁碟清單（Disk）").pack()
 disk_text = tk.Text(root, height=10, bg="#1e1e1e", fg="#00ff00")
 disk_text.pack(fill="x", padx=10)
 
-tk.Label(root, text="磁區清單（Volume）").pack()
+ttk.Label(root, text="磁區清單（Volume）").pack()
 volume_text = tk.Text(root, height=10, bg="#1e1e1e", fg="#00ff00")
 volume_text.pack(fill="x", padx=10)
 
@@ -439,7 +439,7 @@ letter_entry.grid(row=6, column=1)
 #ttk.Button(root, text="格式化", command=formatCmd).pack(pady=2)
 #ttk.Button(root, text="指派磁碟機代號", command=assignLetter).pack(pady=2)
 
-tk.Label(root, text="磁碟分割清單（Partition）").pack()
+ttk.Label(root, text="磁碟分割清單（Partition）").pack()
 partition_text = tk.Text(root, height=11, bg="#1e1e1e", fg="#00ff00")
 partition_text.pack(fill="x", padx=10)
 
