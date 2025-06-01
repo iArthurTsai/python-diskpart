@@ -264,6 +264,38 @@ def getInput():
 
     return diskNum, label, letter, clean_cmd, convert_cmd, fs_cmd, quick
 
+def update_clean_hint(*args):
+    key = clean_var.get()
+    msg = {
+        "Clean": "快速清除分割區，但資料容易復原",
+        "Clean All": "安全擦除整顆磁碟，花時較久時間",
+        "": ""
+    }.get(key, "")
+    clean_hint.config(text=msg)
+
+def update_part_hint(*args):
+    key = part_var.get()
+    msg = {
+        "MBR": "適用於傳統 BIOS、容量小於 2TB",
+        "GPT": "支援 UEFI、容量大於 2TB",
+        "": ""
+    }.get(key, "")
+    part_hint.config(text=msg)
+
+def update_fs_hint(*args):
+    key = fs_var.get()
+    msg = {
+        "exFAT": "適合跨平台使用（Windows/macOS）",
+        "NTFS": "適用於 Windows，macOS 只支援讀取",
+        "FAT32": "最廣泛相容，不支援單一檔案超過 4GB",
+        "": ""
+    }.get(key, "")
+    fs_hint.config(text=msg)
+
+def update_quick_hint():
+    quick_hint.config(text="快速格式化只清除檔案表，不檢查壞軌" if quick_var.get() else "完整格式化會花較長時間，但更安全")
+
+
 # --- 各步驟函式 ---
 def clean():
     if os.path.exists(DISKPART_OUTPUT):
@@ -401,36 +433,65 @@ form_frame = ttk.LabelFrame(root, text="格式化選項")
 form_frame.pack(fill="x", padx=10)
 
 # 表單元件
-ttk.Label(form_frame, text="磁碟編號 (e.g. 2)").grid(row=0, column=0)
+ttk.Label(form_frame, text="磁碟編號").grid(row=0, column=0)
 disk_entry = ttk.Entry(form_frame)
 disk_entry.grid(row=0, column=1)
+
+disk_hint = ttk.Label(form_frame, text="輸入上面的磁碟編號（數字）")
+disk_hint.grid(row=0, column=3)
 
 ttk.Label(form_frame, text="清除方式").grid(row=1, column=0)
 clean_var = tk.StringVar()
 ttk.Combobox(form_frame, textvariable=clean_var, values=["", "Clean", "Clean All"], width=10, state="readonly").grid(row=1, column=1)
-ttk.Label(form_frame, text="Clean/Clean All").grid(row=1, column=2)
+
+clean_hint = ttk.Label(form_frame, text="", wraplength=300)
+clean_hint.grid(row=1, column=3)
+
+clean_var.trace_add("write", update_clean_hint)
+#clean_cb.bind("<<ComboboxSelected>>", update_clean_hint)
 
 ttk.Label(form_frame, text="磁碟架構").grid(row=2, column=0)
 part_var = tk.StringVar()
 ttk.Combobox(form_frame, textvariable=part_var, values=["", "MBR", "GPT"], width=10, state="readonly").grid(row=2, column=1)
-ttk.Label(form_frame, text="MBR/GPT").grid(row=2, column=2)
+
+part_hint = ttk.Label(form_frame, text="", wraplength=300)
+part_hint.grid(row=2, column=3)
+
+part_var.trace_add("write", update_part_hint)
+#part_cb.bind("<<ComboboxSelected>>", update_part_hint)
 
 ttk.Label(form_frame, text="檔案系統格式").grid(row=3, column=0)
 fs_var = tk.StringVar()
 ttk.Combobox(form_frame, textvariable=fs_var, values=["", "exFAT", "NTFS", "FAT32"], width=10, state="readonly").grid(row=3, column=1)
-ttk.Label(form_frame, text="exFAT/NTFS/FAT32").grid(row=3, column=2)
+
+fs_hint = ttk.Label(form_frame, text="", wraplength=300)
+fs_hint.grid(row=3, column=3)
+
+fs_var.trace_add("write", update_fs_hint)
+#fs_cb.bind("<<ComboboxSelected>>", update_fs_hint)
 
 ttk.Label(form_frame, text="格式化方式").grid(row=4, column=0)
 quick_var = tk.BooleanVar()
 ttk.Checkbutton(form_frame, text="快速格式化", variable=quick_var).grid(row=4, column=1, sticky="w")
 
-ttk.Label(form_frame, text="卷標名稱 (最多為 11 個字元)").grid(row=5, column=0)
+quick_hint = ttk.Label(form_frame, text="", wraplength=300)
+quick_hint.grid(row=4, column=3)
+
+quick_var.trace_add("write", lambda *args: update_quick_hint())
+
+ttk.Label(form_frame, text="卷標名稱").grid(row=5, column=0)
 label_entry = ttk.Entry(form_frame)
 label_entry.grid(row=5, column=1)
 
-ttk.Label(form_frame, text="磁碟機代號 (如 E)").grid(row=6, column=0)
+label_hint = ttk.Label(form_frame, text="限制最多11個字元（UTF-8位元組）")
+label_hint.grid(row=5, column=3)
+
+ttk.Label(form_frame, text="磁碟機代號").grid(row=6, column=0)
 letter_entry = ttk.Entry(form_frame)
 letter_entry.grid(row=6, column=1)
+
+letter_hint = ttk.Label(form_frame, text="輸入 A~Z 的單一字母，不可與現有重複")
+letter_hint.grid(row=6, column=3)
 
 # 操作按鈕:由使用者一個一個按鈕慢慢按
 #ttk.Button(root, text="清除磁碟", command=clean).pack(pady=2)
