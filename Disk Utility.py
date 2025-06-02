@@ -26,10 +26,10 @@ if not is_admin():
     sys.exit()
 
 # --- 初始化 ---
-if hasattr(sys, '_MEIPASS'):
-    icon_path = os.path.join(sys._MEIPASS, 'Disk Utility.ico')
+if hasattr(sys, "_MEIPASS"):
+    icon_path = os.path.join(sys._MEIPASS, "Disk Utility.ico")
 else:
-    icon_path = 'Disk Utility.ico'
+    icon_path = "Disk Utility.ico"
 TEMP_DIR = os.path.dirname(os.path.abspath(__file__))
 DISKPART_OUTPUT = os.path.join(TEMP_DIR, "diskpart_output.txt")
 
@@ -268,6 +268,7 @@ def getInput():
 
 def update_clean_hint(*args):
     key = clean_var.get()
+    print("You choose:", key)
     msg = {
         "Clean": "快速清除分割區，但資料容易復原",
         "Clean All": "安全擦除整顆磁碟，花時較久時間",
@@ -277,6 +278,7 @@ def update_clean_hint(*args):
 
 def update_part_hint(*args):
     key = part_var.get()
+    print("You choose:", key)
     msg = {
         "MBR": "適用於傳統 BIOS、容量小於 2TB",
         "GPT": "支援 UEFI、容量大於 2TB",
@@ -286,6 +288,7 @@ def update_part_hint(*args):
 
 def update_fs_hint(*args):
     key = fs_var.get()
+    print("You choose:", key)
     msg = {
         "exFAT": "適合跨平台使用（Windows/macOS）",
         "NTFS": "適用於 Windows，macOS 只支援讀取",
@@ -295,10 +298,12 @@ def update_fs_hint(*args):
     fs_hint.config(text=msg)
 
 def update_quick_hint():
+    state = quick_var.get()
+    print("Quick format:", state)
     quick_hint.config(text="快速格式化只清除檔案表，不檢查壞軌" if quick_var.get() else "完整格式化會花較長時間，但更安全")
 
 def callback(event):
-    print("Clicked at", event.x, event.y)
+    print("Left Click at", event.x, event.y)
 
 def mouseMotion(event):
     x = event.x
@@ -308,6 +313,15 @@ def mouseMotion(event):
 
 def on_exit(event=None):  # event 預設為 None，以兼容按鈕與鍵盤事件
     if messagebox.askokcancel("Exit", "確定要退出嗎？"):
+        print("退出")
+        for filename in ["diskpart_script.txt", "list_disk.txt", "list_volume.txt", "list_partition.txt"]:
+            path = os.path.join(TEMP_DIR, filename)
+            if os.path.exists(path):
+                os.remove(path)
+
+        if os.path.exists(DISKPART_OUTPUT):
+            os.remove(DISKPART_OUTPUT)
+
         root.destroy()
 
 # --- 各步驟函式 ---
@@ -373,9 +387,9 @@ def formatCmd():
             format_cmd = f'format fs={fs_cmd} label="{label}"'
     else:
         if quick_var.get():
-            format_cmd = f'format fs={fs_cmd} quick'
+            format_cmd = f"format fs={fs_cmd} quick"
         else:
-            format_cmd = f'format fs={fs_cmd}'
+            format_cmd = f"format fs={fs_cmd}"
 
     # 組合指令
     commands = [f"select disk {diskNum}", "select partition 1", format_cmd]
@@ -436,7 +450,7 @@ height = 750
 root.minsize(width, height)    # 設定視窗最小值
 left = int((window_width - width)/2)       # 計算左上 x 座標
 top = int((window_height - height)/2)      # 計算左上 y 座標
-root.geometry(f'{width}x{height}+{left}+{top}')
+root.geometry(f"{width}x{height}+{left}+{top}")
 
 # 顯示磁碟資訊區域
 ttk.Label(root, text="磁碟清單（Disk）").pack()
