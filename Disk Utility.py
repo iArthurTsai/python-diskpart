@@ -61,8 +61,9 @@ def show():
 def showOutput():
     with open(DISKPART_OUTPUT, "r", encoding="utf-8") as f:
         tail = f.read()[-400:]
-    return messagebox.askyesno("執行結果", f"{tail}\n是否繼續下一步？\n「是」，進行下一步;「否」，重新執行這個步驟")
+    result = messagebox.askyesnocancel("執行結果", f"{tail}\n是否繼續下一步？\n「是」，進行下一步;「否」，重新執行這個步驟;「取消」，終止流程執行")
     refreshLists()
+    return result
 
 # --- 取得磁碟與磁碟區清單 ---
 def listDisk():
@@ -295,7 +296,6 @@ def update_fs_hint(*args):
 def update_quick_hint():
     quick_hint.config(text="快速格式化只清除檔案表，不檢查壞軌" if quick_var.get() else "完整格式化會花較長時間，但更安全")
 
-
 # --- 各步驟函式 ---
 def clean():
     if os.path.exists(DISKPART_OUTPUT):
@@ -396,11 +396,18 @@ def run_step_chain(steps, index=0):
         refreshLists()
         return
 
-    success = steps[index]()
-    if success:
+    result = steps[index]()
+    
+    if result is True:
+        # 使用者選「是」→ 下一步
         root.after(100, lambda: run_step_chain(steps, index + 1))
-    else:
+    elif result is False:
+        # 使用者選「否」→ 重新執行這一步
         root.after(100, lambda: run_step_chain(steps, index))
+    else:
+        # 使用者選「取消」→ 終止整個流程
+        messagebox.showinfo("已中止", "流程已手動中止。")
+        refreshLists()
 
 # --- GUI 建構 ---
 root = tk.Tk()
