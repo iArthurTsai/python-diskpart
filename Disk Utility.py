@@ -62,6 +62,7 @@ def showOutput():
     with open(DISKPART_OUTPUT, "r", encoding="utf-8") as f:
         tail = f.read()[-400:]
     result = messagebox.askyesnocancel("執行結果", f"{tail}\n是否繼續下一步？\n「是」，進行下一步;「否」，重新執行這個步驟;「取消」，終止流程執行")
+    print(result)
     refreshLists()
     return result
 
@@ -296,6 +297,19 @@ def update_fs_hint(*args):
 def update_quick_hint():
     quick_hint.config(text="快速格式化只清除檔案表，不檢查壞軌" if quick_var.get() else "完整格式化會花較長時間，但更安全")
 
+def callback(event):
+    print("Clicked at", event.x, event.y)
+
+def mouseMotion(event):
+    x = event.x
+    y = event.y
+    textvar = "Mouse location - x:{}, y:{}".format(x,y)
+    var.set(textvar)
+
+def on_exit(event=None):  # event 預設為 None，以兼容按鈕與鍵盤事件
+    if messagebox.askokcancel("Exit", "確定要退出嗎？"):
+        root.destroy()
+
 # --- 各步驟函式 ---
 def clean():
     if os.path.exists(DISKPART_OUTPUT):
@@ -513,6 +527,22 @@ partition_text.pack(fill="x", padx=10)
 
 # 自動引導流程按鈕:
 ttk.Button(root, text="格式化磁碟", command=lambda: run_step_chain([clean, convert, partition, formatCmd, assignLetter])).pack(pady=2)
+
+root.bind("<Button-1>", callback)
+
+x, y = 0, 0
+var = tk.StringVar()
+text = "Mouse location - x:{}, y:{}".format(x,y)
+var.set(text)
+lab = ttk.Label(root, textvariable = var)
+lab.pack(padx = 10, pady = 10)
+root.bind("<Motion>", mouseMotion)
+
+# 綁定 Esc 鍵離開
+root.bind("<Escape>", on_exit)
+
+# 視窗關閉按鈕（X）
+root.protocol("WM_DELETE_WINDOW", on_exit)
 
 refreshLists()
 root.mainloop()
