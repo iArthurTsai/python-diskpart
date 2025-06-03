@@ -225,7 +225,7 @@ def getInput():
     try:
         _, valid_disks = listDisk()  # 忽略原始輸出，只取磁碟編號清單
         if diskNum not in valid_disks:
-            messagebox.showerror("錯誤", f"磁碟編號 {diskNum} 不存在！請重新輸入。")
+            messagebox.showerror("錯誤", f"磁碟編號 {diskNum} 不存在！請重新輸入")
             return None
     except Exception as e:
         messagebox.showerror("錯誤", f"無法驗證磁碟編號是否存在：\n{e}")
@@ -254,7 +254,7 @@ def getInput():
     try:
         _, valid_letters = listLetter()  # 忽略原始輸出，只取磁碟機代號清單
         if letter in valid_letters:
-            messagebox.showerror("錯誤", f"磁碟機代號 {letter} 已指派至其他磁碟機！請重新輸入。")
+            messagebox.showerror("錯誤", f"磁碟機代號 {letter} 已指派至其他磁碟機！請重新輸入")
             return None
     except Exception as e:
         messagebox.showerror("錯誤", f"無法驗證磁碟機代號是否存在：\n{e}")
@@ -265,6 +265,28 @@ def getInput():
     fs_cmd = fs_map.get(fs_key)
 
     return diskNum, label, letter, clean_cmd, convert_cmd, fs_cmd, quick
+
+def diskNumberWrite(*args):
+    # 取得使用者輸入
+    user_input = Disk.get().strip()
+    if not user_input.isdigit():
+        diskChecked.set("應為數字")
+        refreshLists()
+        return
+    try:
+        _, valid_disks = listDisk()  # 忽略原始輸出，只取磁碟編號清單
+        if user_input in valid_disks:
+            diskChecked.set(f"{user_input} 可使用")
+            refreshLists()
+        else:
+            diskChecked.set(f"{user_input} 不存在！請重新輸入")
+            refreshLists()
+    except Exception as e:
+        diskChecked.set("檢查失敗")
+        refreshLists()
+
+def diskNumberShow(*args):
+    print("磁碟編號:", diskChecked.get())
 
 def update_clean_hint(*args):
     key = clean_var.get()
@@ -304,8 +326,7 @@ def update_quick_hint():
 
 def labelNameWrite(*args):
     # 取得使用者輸入
-    user_input = Name.get()
-
+    user_input = Name.get().strip()
     try:
         encoded = user_input.encode("utf-8")
         if len(encoded) > 11:
@@ -333,7 +354,7 @@ def letterNameWrite(*args):
     try:
         _, valid_letters = listLetter()  # 忽略原始輸出，只取磁碟機代號清單
         if user_input in valid_letters:
-            letterChecked.set(f"{user_input} 已指派至其他磁碟機！請重新輸入。")
+            letterChecked.set(f"{user_input} 已指派至其他磁碟機！")
         else:
             letterChecked.set(f"{user_input} 可使用")
     except Exception as e:
@@ -509,11 +530,19 @@ form_frame.pack(fill="x", padx=10)
 
 # 表單元件
 ttk.Label(form_frame, text="磁碟編號").grid(row=0, column=0)
-disk_entry = ttk.Entry(form_frame)
+Disk = tk.StringVar()
+disk_entry = ttk.Entry(form_frame, textvariable=Disk)
 disk_entry.grid(row=0, column=1)
 
 disk_hint = ttk.Label(form_frame, text="輸入上面的磁碟編號（數字）")
 disk_hint.grid(row=0, column=2)
+
+diskChecked = tk.StringVar()
+disk_entry_checked = ttk.Entry(form_frame, textvariable=diskChecked, state="readonly")
+disk_entry_checked.grid(row=0, column=3)
+
+Disk.trace_add("write", diskNumberWrite)
+diskChecked.trace_add("write", diskNumberShow)
 
 ttk.Label(form_frame, text="清除方式").grid(row=1, column=0)
 clean_var = tk.StringVar()
