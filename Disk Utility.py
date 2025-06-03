@@ -302,6 +302,46 @@ def update_quick_hint():
     print("Quick format:", state)
     quick_hint.config(text="快速格式化只清除檔案表，不檢查壞軌" if quick_var.get() else "完整格式化會花較長時間，但更安全")
 
+def labelNameWrite(*args):
+    # 取得使用者輸入
+    user_input = Name.get()
+
+    try:
+        encoded = user_input.encode("utf-8")
+        if len(encoded) > 11:
+            truncated = b""
+            for b in encoded:
+                if len(truncated) + len(bytes([b])) > 11:
+                    break
+                truncated += bytes([b])
+            decoded = truncated.decode("utf-8", errors="ignore")
+            Name11.set(decoded)
+        else:
+            Name11.set(user_input)
+    except Exception as e:
+        Name11.set("檢查失敗")
+
+def labelNameShow(*args):
+    print("卷標名稱:", Name11.get())
+
+def letterNameWrite(*args):
+    # 取得使用者輸入
+    user_input = Alphabet.get().strip().upper()
+    if not user_input.isalpha() or len(user_input) != 1:
+        letterChecked.set("應為 A~Z 的單一字母")
+        return
+    try:
+        _, valid_letters = listLetter()  # 忽略原始輸出，只取磁碟機代號清單
+        if user_input in valid_letters:
+            letterChecked.set(f"{user_input} 已指派至其他磁碟機！請重新輸入。")
+        else:
+            letterChecked.set(f"{user_input} 可使用")
+    except Exception as e:
+        letterChecked.set("檢查失敗")
+
+def letterNameShow(*args):
+    print("磁碟機代號:", letterChecked.get())
+
 def callback(event):
     print("Left Click at", event.x, event.y)
 
@@ -473,14 +513,14 @@ disk_entry = ttk.Entry(form_frame)
 disk_entry.grid(row=0, column=1)
 
 disk_hint = ttk.Label(form_frame, text="輸入上面的磁碟編號（數字）")
-disk_hint.grid(row=0, column=3)
+disk_hint.grid(row=0, column=2)
 
 ttk.Label(form_frame, text="清除方式").grid(row=1, column=0)
 clean_var = tk.StringVar()
 ttk.Combobox(form_frame, textvariable=clean_var, values=["", "Clean", "Clean All"], width=10, state="readonly").grid(row=1, column=1)
 
 clean_hint = ttk.Label(form_frame, text="", wraplength=300)
-clean_hint.grid(row=1, column=3)
+clean_hint.grid(row=1, column=2)
 
 clean_var.trace_add("write", update_clean_hint)
 #clean_cb.bind("<<ComboboxSelected>>", update_clean_hint)
@@ -490,7 +530,7 @@ part_var = tk.StringVar()
 ttk.Combobox(form_frame, textvariable=part_var, values=["", "MBR", "GPT"], width=10, state="readonly").grid(row=2, column=1)
 
 part_hint = ttk.Label(form_frame, text="", wraplength=300)
-part_hint.grid(row=2, column=3)
+part_hint.grid(row=2, column=2)
 
 part_var.trace_add("write", update_part_hint)
 #part_cb.bind("<<ComboboxSelected>>", update_part_hint)
@@ -500,7 +540,7 @@ fs_var = tk.StringVar()
 ttk.Combobox(form_frame, textvariable=fs_var, values=["", "exFAT", "NTFS", "FAT32"], width=10, state="readonly").grid(row=3, column=1)
 
 fs_hint = ttk.Label(form_frame, text="", wraplength=300)
-fs_hint.grid(row=3, column=3)
+fs_hint.grid(row=3, column=2)
 
 fs_var.trace_add("write", update_fs_hint)
 #fs_cb.bind("<<ComboboxSelected>>", update_fs_hint)
@@ -510,23 +550,44 @@ quick_var = tk.BooleanVar()
 ttk.Checkbutton(form_frame, text="快速格式化", variable=quick_var).grid(row=4, column=1, sticky="w")
 
 quick_hint = ttk.Label(form_frame, text="", wraplength=300)
-quick_hint.grid(row=4, column=3)
+quick_hint.grid(row=4, column=2)
 
 quick_var.trace_add("write", lambda *args: update_quick_hint())
 
 ttk.Label(form_frame, text="卷標名稱").grid(row=5, column=0)
-label_entry = ttk.Entry(form_frame)
+Name = tk.StringVar()
+label_entry = ttk.Entry(form_frame, textvariable=Name)
 label_entry.grid(row=5, column=1)
 
 label_hint = ttk.Label(form_frame, text="限制最多11個字元（UTF-8位元組）")
-label_hint.grid(row=5, column=3)
+label_hint.grid(row=5, column=2)
+
+#Name11 = tk.StringVar()
+#label11 = ttk.Label(root, textvariable = Name11)
+#Name11.set("")
+#label11.pack(pady=2)
+
+Name11 = tk.StringVar()
+label11_entry = ttk.Entry(form_frame, textvariable=Name11, state="readonly")
+label11_entry.grid(row=5, column=3)
+
+Name.trace_add("write", labelNameWrite)
+Name11.trace_add("write", labelNameShow)
 
 ttk.Label(form_frame, text="磁碟機代號").grid(row=6, column=0)
-letter_entry = ttk.Entry(form_frame)
+Alphabet = tk.StringVar()
+letter_entry = ttk.Entry(form_frame, textvariable=Alphabet)
 letter_entry.grid(row=6, column=1)
 
 letter_hint = ttk.Label(form_frame, text="輸入 A~Z 的單一字母，不可與現有重複")
-letter_hint.grid(row=6, column=3)
+letter_hint.grid(row=6, column=2)
+
+letterChecked = tk.StringVar()
+letter_entry_checked = ttk.Entry(form_frame, textvariable=letterChecked, state="readonly")
+letter_entry_checked.grid(row=6, column=3)
+
+Alphabet.trace_add("write", letterNameWrite)
+letterChecked.trace_add("write", letterNameShow)
 
 # 操作按鈕:由使用者一個一個按鈕慢慢按
 #ttk.Button(root, text="清除磁碟", command=clean).pack(pady=2)
@@ -549,7 +610,7 @@ var = tk.StringVar()
 text = "Mouse location - x:{}, y:{}".format(x,y)
 var.set(text)
 lab = ttk.Label(root, textvariable = var)
-lab.pack(padx = 10, pady = 10)
+lab.pack(fill="x", padx=10, pady=2)
 root.bind("<Motion>", mouseMotion)
 
 # 綁定 Esc 鍵離開
