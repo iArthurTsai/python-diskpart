@@ -5,6 +5,7 @@ import subprocess
 #import re
 import tkinter as tk
 from tkinter import ttk, messagebox, font
+from tkinter.colorchooser import askcolor
 
 fonts = tk.Tk()
 fonts.withdraw()  # 隱藏視窗
@@ -498,6 +499,56 @@ def run_step_chain(steps, index=0):
         messagebox.showinfo("已中止", "流程已手動中止。")
         refreshLists()
 
+def change_theme():
+    color = askcolor(title="選擇背景顏色")[1]
+    if color:
+        def is_dark(hex_color):
+            r = int(hex_color[1:3], 16)
+            g = int(hex_color[3:5], 16)
+            b = int(hex_color[5:7], 16)
+            return (r + g + b) / 3 < 128
+
+        dark = is_dark(color)
+        bg = color
+        fg = "#ffffff" if is_dark(color) else "#000000"
+
+        # 設定 root 背景
+        root.configure(bg=bg)
+
+        style = ttk.Style()
+        
+        style.configure("TLabel", background=bg, foreground=fg)
+        style.configure("TEntry", selectbackground=bg, selectforeground=fg)
+        style.configure("TCombobox", selectbackground=bg, selectforeground=fg)
+        style.configure("TCheckbutton", background=bg, foreground=fg)
+        style.configure("TButton",background=bg)
+        style.configure("TLabelframe", background=bg)
+        style.configure("TLabelframe.Label", background=bg, foreground=fg)
+
+        # 遍歷所有 widget
+        for widget in root.winfo_children():
+            apply_theme(widget, bg, fg)
+
+def apply_theme(widget, bg, fg):
+    if isinstance(widget, tk.Text):
+        try:
+            widget.configure(bg=bg, fg=fg, insertbackground=fg)
+        except:
+            pass
+    for child in widget.winfo_children():
+        apply_theme(child, bg, fg)
+        
+'''widget_name = "TCombobox"
+        print(f"\n💡 {widget_name} 可設的靜態樣式屬性（configure）:")
+        print(style.configure(widget_name))
+        print(f"\n📐 {widget_name} 的 layout 結構:")
+        print(style.layout(widget_name))
+        print(f"\n🧩 {widget_name} layout 各元素可改的參數:")
+        for element in style.layout(widget_name):
+            print(f"  - {element[0]}: {style.element_options(element[0])}")
+        print(f"\n🧭 {widget_name} 的互動狀態樣式（map）:")
+        print(style.map(widget_name))'''
+
 # --- GUI 建構 ---
 root = tk.Tk()
 root.title("Disk Utility")
@@ -515,11 +566,11 @@ root.geometry(f"{width}x{height}+{left}+{top}")
 
 # 顯示磁碟資訊區域
 ttk.Label(root, text="磁碟清單（Disk）").pack()
-disk_text = tk.Text(root, height=10, bg="#1e1e1e", fg="#00ff00")
+disk_text = tk.Text(root, height=10)#, bg="#000000", fg="#00ff00")
 disk_text.pack(fill="x", padx=10)
 
 ttk.Label(root, text="磁區清單（Volume）").pack()
-volume_text = tk.Text(root, height=10, bg="#1e1e1e", fg="#00ff00")
+volume_text = tk.Text(root, height=10)#, bg="#000000", fg="#00ff00")
 volume_text.pack(fill="x", padx=10)
 
 ttk.Button(root, text="重新整理磁碟資訊", command=refreshLists).pack(pady=2)
@@ -528,8 +579,11 @@ ttk.Button(root, text="重新整理磁碟資訊", command=refreshLists).pack(pad
 form_frame = ttk.LabelFrame(root, text="格式化選項")
 form_frame.pack(fill="x", padx=10)
 
+# 設定 column=1 為可擴展欄位（例如 Entry）
+form_frame.columnconfigure(1, weight=1)
+
 # 表單元件
-ttk.Label(form_frame, text="磁碟編號").grid(row=0, column=0)
+ttk.Label(form_frame, text="磁碟編號").grid(row=0, column=0, sticky="w")
 Disk = tk.StringVar()
 disk_entry = ttk.Entry(form_frame, textvariable=Disk)
 disk_entry.grid(row=0, column=1)
@@ -544,7 +598,7 @@ disk_entry_checked.grid(row=0, column=3)
 Disk.trace_add("write", diskNumberWrite)
 diskChecked.trace_add("write", diskNumberShow)
 
-ttk.Label(form_frame, text="清除方式").grid(row=1, column=0)
+ttk.Label(form_frame, text="清除方式").grid(row=1, column=0, sticky="w")
 clean_var = tk.StringVar()
 ttk.Combobox(form_frame, textvariable=clean_var, values=["", "Clean", "Clean All"], width=10, state="readonly").grid(row=1, column=1)
 
@@ -554,7 +608,7 @@ clean_hint.grid(row=1, column=2)
 clean_var.trace_add("write", update_clean_hint)
 #clean_cb.bind("<<ComboboxSelected>>", update_clean_hint)
 
-ttk.Label(form_frame, text="磁碟架構").grid(row=2, column=0)
+ttk.Label(form_frame, text="磁碟架構").grid(row=2, column=0, sticky="w")
 part_var = tk.StringVar()
 ttk.Combobox(form_frame, textvariable=part_var, values=["", "MBR", "GPT"], width=10, state="readonly").grid(row=2, column=1)
 
@@ -564,7 +618,7 @@ part_hint.grid(row=2, column=2)
 part_var.trace_add("write", update_part_hint)
 #part_cb.bind("<<ComboboxSelected>>", update_part_hint)
 
-ttk.Label(form_frame, text="檔案系統格式").grid(row=3, column=0)
+ttk.Label(form_frame, text="檔案系統格式").grid(row=3, column=0, sticky="w")
 fs_var = tk.StringVar()
 ttk.Combobox(form_frame, textvariable=fs_var, values=["", "exFAT", "NTFS", "FAT32"], width=10, state="readonly").grid(row=3, column=1)
 
@@ -574,16 +628,16 @@ fs_hint.grid(row=3, column=2)
 fs_var.trace_add("write", update_fs_hint)
 #fs_cb.bind("<<ComboboxSelected>>", update_fs_hint)
 
-ttk.Label(form_frame, text="格式化方式").grid(row=4, column=0)
+ttk.Label(form_frame, text="格式化方式").grid(row=4, column=0, sticky="w")
 quick_var = tk.BooleanVar()
-ttk.Checkbutton(form_frame, text="快速格式化", variable=quick_var).grid(row=4, column=1, sticky="w")
+ttk.Checkbutton(form_frame, text="快速格式化", variable=quick_var).grid(row=4, column=1)
 
 quick_hint = ttk.Label(form_frame, text="", wraplength=300)
 quick_hint.grid(row=4, column=2)
 
 quick_var.trace_add("write", lambda *args: update_quick_hint())
 
-ttk.Label(form_frame, text="卷標名稱").grid(row=5, column=0)
+ttk.Label(form_frame, text="卷標名稱").grid(row=5, column=0, sticky="w")
 Name = tk.StringVar()
 label_entry = ttk.Entry(form_frame, textvariable=Name)
 label_entry.grid(row=5, column=1)
@@ -603,7 +657,7 @@ label11_entry.grid(row=5, column=3)
 Name.trace_add("write", labelNameWrite)
 Name11.trace_add("write", labelNameShow)
 
-ttk.Label(form_frame, text="磁碟機代號").grid(row=6, column=0)
+ttk.Label(form_frame, text="磁碟機代號").grid(row=6, column=0, sticky="w")
 Alphabet = tk.StringVar()
 letter_entry = ttk.Entry(form_frame, textvariable=Alphabet)
 letter_entry.grid(row=6, column=1)
@@ -626,11 +680,13 @@ letterChecked.trace_add("write", letterNameShow)
 #ttk.Button(root, text="指派磁碟機代號", command=assignLetter).pack(pady=2)
 
 ttk.Label(root, text="磁碟分割清單（Partition）").pack()
-partition_text = tk.Text(root, height=11, bg="#1e1e1e", fg="#00ff00")
+partition_text = tk.Text(root, height=11)#, bg="#000000", fg="#00ff00")
 partition_text.pack(fill="x", padx=10)
 
 # 自動引導流程按鈕:
 ttk.Button(root, text="格式化磁碟", command=lambda: run_step_chain([clean, convert, partition, formatCmd, assignLetter])).pack(pady=2)
+
+ttk.Button(root, text="選擇主題顏色", command=change_theme).pack(pady=2)
 
 root.bind("<Button-1>", callback)
 
