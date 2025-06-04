@@ -595,7 +595,7 @@ disk_hint.grid(row=0, column=2)
 
 diskChecked = tk.StringVar()
 disk_entry_checked = ttk.Entry(form_frame, textvariable=diskChecked, state="readonly")
-disk_entry_checked.grid(row=0, column=3)
+disk_entry_checked.grid(row=0, column=3, sticky="e")
 
 Disk.trace_add("write", diskNumberWrite)
 diskChecked.trace_add("write", diskNumberShow)
@@ -654,7 +654,7 @@ label_hint.grid(row=5, column=2)
 
 Name11 = tk.StringVar()
 label11_entry = ttk.Entry(form_frame, textvariable=Name11, state="readonly")
-label11_entry.grid(row=5, column=3)
+label11_entry.grid(row=5, column=3, sticky="e")
 
 Name.trace_add("write", labelNameWrite)
 Name11.trace_add("write", labelNameShow)
@@ -669,7 +669,7 @@ letter_hint.grid(row=6, column=2)
 
 letterChecked = tk.StringVar()
 letter_entry_checked = ttk.Entry(form_frame, textvariable=letterChecked, state="readonly")
-letter_entry_checked.grid(row=6, column=3)
+letter_entry_checked.grid(row=6, column=3, sticky="e")
 
 Alphabet.trace_add("write", letterNameWrite)
 letterChecked.trace_add("write", letterNameShow)
