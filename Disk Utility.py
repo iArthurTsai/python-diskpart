@@ -582,11 +582,13 @@ form_frame.pack(fill="x", padx=10)
 # 設定 column=1 為可擴展欄位（例如 Entry）
 form_frame.columnconfigure(1, weight=1)
 
+width=12
+
 # 表單元件
-ttk.Label(form_frame, text="磁碟編號").grid(row=0, column=0, sticky="w")
+ttk.Label(form_frame, text="磁碟編號", width=width).grid(row=0, column=0, sticky="w")
 Disk = tk.StringVar()
 disk_entry = ttk.Entry(form_frame, textvariable=Disk)
-disk_entry.grid(row=0, column=1)
+disk_entry.grid(row=0, column=1, sticky="w")
 
 disk_hint = ttk.Label(form_frame, text="輸入上面的磁碟編號（數字）")
 disk_hint.grid(row=0, column=2)
@@ -598,9 +600,9 @@ disk_entry_checked.grid(row=0, column=3)
 Disk.trace_add("write", diskNumberWrite)
 diskChecked.trace_add("write", diskNumberShow)
 
-ttk.Label(form_frame, text="清除方式").grid(row=1, column=0, sticky="w")
+ttk.Label(form_frame, text="清除方式", width=width).grid(row=1, column=0, sticky="w")
 clean_var = tk.StringVar()
-ttk.Combobox(form_frame, textvariable=clean_var, values=["", "Clean", "Clean All"], width=10, state="readonly").grid(row=1, column=1)
+ttk.Combobox(form_frame, textvariable=clean_var, values=["", "Clean", "Clean All"], width=10, state="readonly").grid(row=1, column=1, sticky="w")
 
 clean_hint = ttk.Label(form_frame, text="", wraplength=300)
 clean_hint.grid(row=1, column=2)
@@ -608,9 +610,9 @@ clean_hint.grid(row=1, column=2)
 clean_var.trace_add("write", update_clean_hint)
 #clean_cb.bind("<<ComboboxSelected>>", update_clean_hint)
 
-ttk.Label(form_frame, text="磁碟架構").grid(row=2, column=0, sticky="w")
+ttk.Label(form_frame, text="磁碟架構", width=width).grid(row=2, column=0, sticky="w")
 part_var = tk.StringVar()
-ttk.Combobox(form_frame, textvariable=part_var, values=["", "MBR", "GPT"], width=10, state="readonly").grid(row=2, column=1)
+ttk.Combobox(form_frame, textvariable=part_var, values=["", "MBR", "GPT"], width=10, state="readonly").grid(row=2, column=1, sticky="w")
 
 part_hint = ttk.Label(form_frame, text="", wraplength=300)
 part_hint.grid(row=2, column=2)
@@ -618,9 +620,9 @@ part_hint.grid(row=2, column=2)
 part_var.trace_add("write", update_part_hint)
 #part_cb.bind("<<ComboboxSelected>>", update_part_hint)
 
-ttk.Label(form_frame, text="檔案系統格式").grid(row=3, column=0, sticky="w")
+ttk.Label(form_frame, text="檔案系統格式", width=width).grid(row=3, column=0, sticky="w")
 fs_var = tk.StringVar()
-ttk.Combobox(form_frame, textvariable=fs_var, values=["", "exFAT", "NTFS", "FAT32"], width=10, state="readonly").grid(row=3, column=1)
+ttk.Combobox(form_frame, textvariable=fs_var, values=["", "exFAT", "NTFS", "FAT32"], width=10, state="readonly").grid(row=3, column=1, sticky="w")
 
 fs_hint = ttk.Label(form_frame, text="", wraplength=300)
 fs_hint.grid(row=3, column=2)
@@ -628,19 +630,19 @@ fs_hint.grid(row=3, column=2)
 fs_var.trace_add("write", update_fs_hint)
 #fs_cb.bind("<<ComboboxSelected>>", update_fs_hint)
 
-ttk.Label(form_frame, text="格式化方式").grid(row=4, column=0, sticky="w")
+ttk.Label(form_frame, text="格式化方式", width=width).grid(row=4, column=0, sticky="w")
 quick_var = tk.BooleanVar()
-ttk.Checkbutton(form_frame, text="快速格式化", variable=quick_var).grid(row=4, column=1)
+ttk.Checkbutton(form_frame, text="快速格式化", variable=quick_var).grid(row=4, column=1, sticky="w")
 
 quick_hint = ttk.Label(form_frame, text="", wraplength=300)
 quick_hint.grid(row=4, column=2)
 
 quick_var.trace_add("write", lambda *args: update_quick_hint())
 
-ttk.Label(form_frame, text="卷標名稱").grid(row=5, column=0, sticky="w")
+ttk.Label(form_frame, text="卷標名稱", width=width).grid(row=5, column=0, sticky="w")
 Name = tk.StringVar()
 label_entry = ttk.Entry(form_frame, textvariable=Name)
-label_entry.grid(row=5, column=1)
+label_entry.grid(row=5, column=1, sticky="w")
 
 label_hint = ttk.Label(form_frame, text="限制最多11個字元（UTF-8位元組）")
 label_hint.grid(row=5, column=2)
@@ -657,10 +659,10 @@ label11_entry.grid(row=5, column=3)
 Name.trace_add("write", labelNameWrite)
 Name11.trace_add("write", labelNameShow)
 
-ttk.Label(form_frame, text="磁碟機代號").grid(row=6, column=0, sticky="w")
+ttk.Label(form_frame, text="磁碟機代號", width=width).grid(row=6, column=0, sticky="w")
 Alphabet = tk.StringVar()
 letter_entry = ttk.Entry(form_frame, textvariable=Alphabet)
-letter_entry.grid(row=6, column=1)
+letter_entry.grid(row=6, column=1, sticky="w")
 
 letter_hint = ttk.Label(form_frame, text="輸入 A~Z 的單一字母，不可與現有重複")
 letter_hint.grid(row=6, column=2)
