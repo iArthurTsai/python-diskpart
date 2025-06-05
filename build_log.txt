@@ -1,11 +1,11 @@
-40 DEPRECATION: Running PyInstaller as admin is not necessary nor sensible. Run PyInstaller from a non-administrator terminal. PyInstaller 7.0 will block this.
-200 INFO: PyInstaller: 6.13.0, contrib hooks: 2025.4
-200 INFO: Python: 3.8.20
-220 INFO: Platform: Windows-7-6.1.7601-SP1
-220 INFO: Python environment: C:\Users\User\AppData\Local\Programs\Python\Python38
-220 INFO: wrote C:\Users\User\Downloads\app\Disk Utility.spec
-220 INFO: Removing temporary files and cleaning cache in C:\Users\User\AppData\Local\pyinstaller
-230 INFO: Module search paths (PYTHONPATH):
+39 DEPRECATION: Running PyInstaller as admin is not necessary nor sensible. Run PyInstaller from a non-administrator terminal. PyInstaller 7.0 will block this.
+419 INFO: PyInstaller: 6.13.0, contrib hooks: 2025.4
+419 INFO: Python: 3.8.20
+449 INFO: Platform: Windows-7-6.1.7601-SP1
+449 INFO: Python environment: C:\Users\User\AppData\Local\Programs\Python\Python38
+449 INFO: wrote C:\Users\User\Downloads\app\Disk Utility.spec
+449 INFO: Removing temporary files and cleaning cache in C:\Users\User\AppData\Local\pyinstaller
+459 INFO: Module search paths (PYTHONPATH):
 ['C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python38\\Scripts\\pyinstaller.exe',
  'C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python38\\python38.zip',
  'C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python38\\DLLs',
@@ -13,53 +13,53 @@
  'C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python38',
  'C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages',
  'C:\\Users\\User\\Downloads\\app']
-580 INFO: Appending 'datas' from .spec
-580 INFO: checking Analysis
-580 INFO: Building Analysis because Analysis-00.toc is non existent
-580 INFO: Running Analysis Analysis-00.toc
-580 INFO: Target bytecode optimization level: 0
-580 INFO: Initializing module dependency graph...
-589 INFO: Initializing module graph hook caches...
-600 INFO: Analyzing modules for base_library.zip ...
-1470 INFO: Processing standard module hook 'hook-heapq.py' from 'C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
-1609 INFO: Processing standard module hook 'hook-encodings.py' from 'C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
-2640 INFO: Processing standard module hook 'hook-pickle.py' from 'C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
-3230 INFO: Caching module dependency graph...
-3259 INFO: Looking for Python shared library...
-3269 INFO: Using Python shared library: C:\Users\User\AppData\Local\Programs\Python\Python38\python38.dll
-3269 INFO: Analyzing C:\Users\User\Downloads\app\Disk Utility.py
-3280 INFO: Processing pre-find-module-path hook 'hook-tkinter.py' from 'C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks\\pre_find_module_path'
-3280 INFO: TclTkInfo: initializing cached Tcl/Tk info...
-3490 INFO: Processing standard module hook 'hook-_tkinter.py' from 'C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
-3519 INFO: Processing module hooks (post-graph stage)...
-3519 INFO: Processing standard module hook 'hook-_tkinter.py' from 'C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
-3529 INFO: Performing binary vs. data reclassification (919 entries)
-3569 INFO: Looking for ctypes DLLs
-3569 INFO: Analyzing run-time hooks ...
-3569 INFO: Including run-time hook 'pyi_rth__tkinter.py' from 'C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks\\rthooks'
-3600 INFO: Creating base_library.zip...
-3649 INFO: Looking for dynamic libraries
-3750 INFO: Extra DLL search directories (AddDllDirectory): []
-3750 INFO: Extra DLL search directories (PATH): []
-3990 INFO: Warnings written to C:\Users\User\Downloads\app\build\Disk Utility\warn-Disk Utility.txt
-4009 INFO: Graph cross-reference written to C:\Users\User\Downloads\app\build\Disk Utility\xref-Disk Utility.html
-4040 INFO: checking PYZ
-4040 INFO: Building PYZ because PYZ-00.toc is non existent
-4040 INFO: Building PYZ (ZlibArchive) C:\Users\User\Downloads\app\build\Disk Utility\PYZ-00.pyz
-4210 INFO: Building PYZ (ZlibArchive) C:\Users\User\Downloads\app\build\Disk Utility\PYZ-00.pyz completed successfully.
-4250 INFO: checking PKG
-4250 INFO: Building PKG because PKG-00.toc is non existent
-4250 INFO: Building PKG (CArchive) Disk Utility.pkg
-6280 INFO: Building PKG (CArchive) Disk Utility.pkg completed successfully.
-6300 INFO: Bootloader C:\Users\User\AppData\Local\Programs\Python\Python38\lib\site-packages\PyInstaller\bootloader\Windows-64bit-intel\runw.exe
-6300 INFO: checking EXE
-6300 INFO: Building EXE because EXE-00.toc is non existent
-6300 INFO: Building EXE from EXE-00.toc
-6300 INFO: Copying bootloader EXE to C:\Users\User\Downloads\app\dist\Disk Utility.exe
-6300 INFO: Copying icon to EXE
-6300 INFO: Copying 0 resources to EXE
-6309 INFO: Embedding manifest in EXE
-6309 INFO: Appending PKG archive to EXE
-6369 INFO: Fixing EXE headers
-6540 INFO: Building EXE from EXE-00.toc completed successfully.
-6560 INFO: Build complete! The results are available in: C:\Users\User\Downloads\app\dist
+909 INFO: Appending 'datas' from .spec
+909 INFO: checking Analysis
+909 INFO: Building Analysis because Analysis-00.toc is non existent
+909 INFO: Running Analysis Analysis-00.toc
+909 INFO: Target bytecode optimization level: 0
+909 INFO: Initializing module dependency graph...
+919 INFO: Initializing module graph hook caches...
+1029 INFO: Analyzing modules for base_library.zip ...
+2169 INFO: Processing standard module hook 'hook-heapq.py' from 'C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+2309 INFO: Processing standard module hook 'hook-encodings.py' from 'C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+4218 INFO: Processing standard module hook 'hook-pickle.py' from 'C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+6648 INFO: Caching module dependency graph...
+6678 INFO: Looking for Python shared library...
+6688 INFO: Using Python shared library: C:\Users\User\AppData\Local\Programs\Python\Python38\python38.dll
+6688 INFO: Analyzing C:\Users\User\Downloads\app\Disk Utility.py
+6738 INFO: Processing pre-find-module-path hook 'hook-tkinter.py' from 'C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks\\pre_find_module_path'
+6738 INFO: TclTkInfo: initializing cached Tcl/Tk info...
+7018 INFO: Processing standard module hook 'hook-_tkinter.py' from 'C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+7118 INFO: Processing module hooks (post-graph stage)...
+7118 INFO: Processing standard module hook 'hook-_tkinter.py' from 'C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+7128 INFO: Performing binary vs. data reclassification (919 entries)
+13686 INFO: Looking for ctypes DLLs
+13686 INFO: Analyzing run-time hooks ...
+13686 INFO: Including run-time hook 'pyi_rth__tkinter.py' from 'C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+13736 INFO: Creating base_library.zip...
+13786 INFO: Looking for dynamic libraries
+13916 INFO: Extra DLL search directories (AddDllDirectory): []
+13916 INFO: Extra DLL search directories (PATH): []
+14426 INFO: Warnings written to C:\Users\User\Downloads\app\build\Disk Utility\warn-Disk Utility.txt
+14446 INFO: Graph cross-reference written to C:\Users\User\Downloads\app\build\Disk Utility\xref-Disk Utility.html
+14516 INFO: checking PYZ
+14516 INFO: Building PYZ because PYZ-00.toc is non existent
+14516 INFO: Building PYZ (ZlibArchive) C:\Users\User\Downloads\app\build\Disk Utility\PYZ-00.pyz
+14686 INFO: Building PYZ (ZlibArchive) C:\Users\User\Downloads\app\build\Disk Utility\PYZ-00.pyz completed successfully.
+14716 INFO: checking PKG
+14716 INFO: Building PKG because PKG-00.toc is non existent
+14716 INFO: Building PKG (CArchive) Disk Utility.pkg
+16725 INFO: Building PKG (CArchive) Disk Utility.pkg completed successfully.
+16745 INFO: Bootloader C:\Users\User\AppData\Local\Programs\Python\Python38\lib\site-packages\PyInstaller\bootloader\Windows-64bit-intel\runw.exe
+16745 INFO: checking EXE
+16745 INFO: Building EXE because EXE-00.toc is non existent
+16745 INFO: Building EXE from EXE-00.toc
+16745 INFO: Copying bootloader EXE to C:\Users\User\Downloads\app\dist\Disk Utility.exe
+17605 INFO: Copying icon to EXE
+17925 INFO: Copying 0 resources to EXE
+17925 INFO: Embedding manifest in EXE
+20115 INFO: Appending PKG archive to EXE
+20175 INFO: Fixing EXE headers
+23225 INFO: Building EXE from EXE-00.toc completed successfully.
+23245 INFO: Build complete! The results are available in: C:\Users\User\Downloads\app\dist
