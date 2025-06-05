@@ -9,6 +9,7 @@ from tkinter.colorchooser import askcolor
 
 fonts = tk.Tk()
 fonts.withdraw()  # 隱藏視窗
+print(tk.TkVersion)
 print(font.families())
 fonts.destroy()   # 用完就關掉
 
@@ -554,14 +555,15 @@ root = tk.Tk()
 root.title("Disk Utility")
 root.iconbitmap(icon_path)
 
-window_width = root.winfo_screenwidth()    # 取得螢幕寬度
-window_height = root.winfo_screenheight()  # 取得螢幕高度
+screen_width = root.winfo_screenwidth()    # 取得螢幕寬度
+screen_height = root.winfo_screenheight()  # 取得螢幕高度
 
 width = 650
 height = 750
+root.resizable(True, True)
 root.minsize(width, height)    # 設定視窗最小值
-left = int((window_width - width)/2)       # 計算左上 x 座標
-top = int((window_height - height)/2)      # 計算左上 y 座標
+left = int((screen_width - width)/2)       # 計算左上 x 座標
+top = int((screen_height - height)/2)      # 計算左上 y 座標
 root.geometry(f"{width}x{height}+{left}+{top}")
 
 # 顯示磁碟資訊區域
@@ -573,7 +575,7 @@ ttk.Label(root, text="磁區清單（Volume）").pack()
 volume_text = tk.Text(root, height=10)#, bg="#000000", fg="#00ff00")
 volume_text.pack(fill="x", padx=10)
 
-ttk.Button(root, text="重新整理磁碟資訊", command=refreshLists).pack(pady=2)
+ttk.Button(root, text="重新整理磁碟資訊", cursor="exchange", command=refreshLists).pack(pady=2)
 
 # 格式化選項區
 form_frame = ttk.LabelFrame(root, text="格式化選項")
@@ -688,7 +690,7 @@ partition_text.pack(fill="x", padx=10)
 # 自動引導流程按鈕:
 ttk.Button(root, text="格式化磁碟", command=lambda: run_step_chain([clean, convert, partition, formatCmd, assignLetter])).pack(pady=2)
 
-ttk.Button(root, text="選擇主題顏色", command=change_theme).pack(pady=2)
+ttk.Button(root, text="選擇主題顏色", cursor="spraycan", command=change_theme).pack(side=tk.RIGHT, padx=10, pady=2)
 
 root.bind("<Button-1>", callback)
 
@@ -696,8 +698,8 @@ x, y = 0, 0
 var = tk.StringVar()
 text = "Mouse location - x:{}, y:{}".format(x,y)
 var.set(text)
-lab = ttk.Label(root, textvariable = var)
-lab.pack(fill="x", padx=10, pady=2)
+lab = ttk.Label(root, textvariable = var, cursor="mouse")
+lab.pack(side=tk.LEFT, padx=10, pady=2)
 root.bind("<Motion>", mouseMotion)
 
 # 綁定 Esc 鍵離開
