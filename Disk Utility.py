@@ -525,6 +525,17 @@ def change_theme():
         style.configure("TButton",background=bg)
         style.configure("TLabelframe", background=bg)
         style.configure("TLabelframe.Label", background=bg, foreground=fg)
+        
+        '''widget_name = "TCombobox"
+        print(f"\n💡 {widget_name} 可設的靜態樣式屬性（configure）:")
+        print(style.configure(widget_name))
+        print(f"\n📐 {widget_name} 的 layout 結構:")
+        print(style.layout(widget_name))
+        print(f"\n🧩 {widget_name} layout 各元素可改的參數:")
+        for element in style.layout(widget_name):
+            print(f"  - {element[0]}: {style.element_options(element[0])}")
+        print(f"\n🧭 {widget_name} 的互動狀態樣式（map）:")
+        print(style.map(widget_name))'''
 
         # 遍歷所有 widget
         for widget in root.winfo_children():
@@ -538,17 +549,6 @@ def apply_theme(widget, bg, fg):
             pass
     for child in widget.winfo_children():
         apply_theme(child, bg, fg)
-        
-'''widget_name = "TCombobox"
-        print(f"\n💡 {widget_name} 可設的靜態樣式屬性（configure）:")
-        print(style.configure(widget_name))
-        print(f"\n📐 {widget_name} 的 layout 結構:")
-        print(style.layout(widget_name))
-        print(f"\n🧩 {widget_name} layout 各元素可改的參數:")
-        for element in style.layout(widget_name):
-            print(f"  - {element[0]}: {style.element_options(element[0])}")
-        print(f"\n🧭 {widget_name} 的互動狀態樣式（map）:")
-        print(style.map(widget_name))'''
 
 # --- GUI 建構 ---
 root = tk.Tk()
@@ -705,7 +705,7 @@ root.bind("<Motion>", mouseMotion)
 # 綁定 Esc 鍵離開
 root.bind("<Escape>", on_exit)
 
-# 視窗關閉按鈕（X）
+# 綁定視窗關閉按鈕（X）離開
 root.protocol("WM_DELETE_WINDOW", on_exit)
 
 refreshLists()
