@@ -748,8 +748,8 @@ font_box.bind("<<ComboboxSelected>>", lambda e: change_font_family(font_var.get(
 
 # ====== 控制字體大小的 Spinbox ======
 size_var = tk.StringVar()#value=str(default_font.cget("size")))
-size_var.set(10)
-spin = ttk.Spinbox(root, from_=6, to=48, textvariable=size_var, width=3, state="readonly")#, command=update_font_size)
+size_var.set("10")
+spin = ttk.Spinbox(root, from_=6, to=20, textvariable=size_var, width=3, state="readonly")
 spin.pack(side=tk.RIGHT, padx=10, pady=2)
 
 # 若用者手動輸入數字也要更新字型大小
