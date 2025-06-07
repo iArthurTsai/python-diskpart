@@ -7,12 +7,6 @@ import tkinter as tk
 from tkinter import ttk, messagebox, font
 from tkinter.colorchooser import askcolor
 
-fonts = tk.Tk()
-fonts.withdraw()  # 隱藏視窗
-print(tk.TkVersion)
-print(font.families())
-fonts.destroy()   # 用完就關掉
-
 # --- 權限檢查 ---
 def is_admin():
     try:
@@ -28,6 +22,8 @@ if not is_admin():
     sys.exit()
 
 # --- 初始化 ---
+print(tk.TkVersion)
+
 if hasattr(sys, "_MEIPASS"):
     icon_path = os.path.join(sys._MEIPASS, "Disk Utility.ico")
 else:
@@ -522,7 +518,7 @@ def change_theme():
         style.configure("TEntry", selectbackground=bg, selectforeground=fg)
         style.configure("TCombobox", selectbackground=bg, selectforeground=fg)
         style.configure("TCheckbutton", background=bg, foreground=fg)
-        style.configure("TButton",background=bg)
+        style.configure("TButton", background=bg)
         style.configure("TLabelframe", background=bg)
         style.configure("TLabelframe.Label", background=bg, foreground=fg)
         
@@ -550,6 +546,52 @@ def apply_theme(widget, bg, fg):
     for child in widget.winfo_children():
         apply_theme(child, bg, fg)
 
+def change_font_family(family_name):
+    # 設定統一的字型與大小
+    new_font = font.Font(family=family_name, size=int(size_var.get()))#10)
+
+    #print("\n🖋 原始字型資訊：")
+
+    # 遍歷所有元件
+    for widget in root.winfo_children():
+        #print_widget_font(widget)
+        apply_font(widget, new_font)
+
+    #print("\n🖋 修改後字型資訊：")
+
+    #for widget in root.winfo_children():
+        #print_widget_font(widget)
+
+    # 對 ttk 樣式的元件，需額外透過 style 設定
+    style = ttk.Style()
+    style.configure("TLabel", font=new_font)
+    style.configure("TEntry", font=new_font)
+    style.configure("TCombobox", font=new_font)
+    style.configure("TCheckbutton", font=new_font)
+    style.configure("TButton", font=new_font)
+    style.configure("TLabelframe.Label", font=new_font)
+
+def print_widget_font(widget):
+    try:
+        current_font = font.Font(font=widget["font"])
+        print(f"{widget.__class__.__name__}: {current_font.actual()}")
+    except (tk.TclError, KeyError):
+        pass  # 有些 ttk 元件沒有直接 font 屬性
+
+    # 遞迴列印子元件
+    for child in widget.winfo_children():
+        print_widget_font(child)
+
+def apply_font(widget, new_font):
+    try:
+        widget.configure(font=new_font)
+    except (tk.TclError, KeyError):
+        pass  # 某些 widget 不能直接設 font，跳過即可
+
+    # 遞迴處理子元件
+    for child in widget.winfo_children():
+        apply_font(child, new_font)
+
 # --- GUI 建構 ---
 root = tk.Tk()
 root.title("Disk Utility")
@@ -559,20 +601,24 @@ screen_width = root.winfo_screenwidth()    # 取得螢幕寬度
 screen_height = root.winfo_screenheight()  # 取得螢幕高度
 
 width = 650
-height = 750
+height = 950
 root.resizable(True, True)
 root.minsize(width, height)    # 設定視窗最小值
 left = int((screen_width - width)/2)       # 計算左上 x 座標
 top = int((screen_height - height)/2)      # 計算左上 y 座標
 root.geometry(f"{width}x{height}+{left}+{top}")
 
+# --- 建立字型選單 ---
+available_fonts = (font.families())
+font_var = tk.StringVar()
+
 # 顯示磁碟資訊區域
 ttk.Label(root, text="磁碟清單（Disk）").pack()
-disk_text = tk.Text(root, height=10)#, bg="#000000", fg="#00ff00")
+disk_text = tk.Text(root, height=10, bg="#000000", fg="#00ff00")
 disk_text.pack(fill="x", padx=10)
 
 ttk.Label(root, text="磁區清單（Volume）").pack()
-volume_text = tk.Text(root, height=10)#, bg="#000000", fg="#00ff00")
+volume_text = tk.Text(root, height=10, bg="#000000", fg="#00ff00")
 volume_text.pack(fill="x", padx=10)
 
 ttk.Button(root, text="重新整理磁碟資訊", cursor="exchange", command=refreshLists).pack(pady=2)
@@ -589,7 +635,9 @@ width=12
 # 表單元件
 ttk.Label(form_frame, text="磁碟編號", width=width).grid(row=0, column=0, sticky="w")
 Disk = tk.StringVar()
-disk_entry = ttk.Entry(form_frame, textvariable=Disk)
+#disk_entry = ttk.Entry(form_frame, textvariable=Disk, width=10)
+_, valid_disks = listDisk()  # 忽略原始輸出，只取磁碟編號清單
+disk_entry = ttk.Combobox(form_frame, textvariable=Disk, values=valid_disks, width=10)
 disk_entry.grid(row=0, column=1, sticky="w")
 
 disk_hint = ttk.Label(form_frame, text="輸入上面的磁碟編號（數字）")
@@ -652,7 +700,7 @@ label_hint.grid(row=5, column=2)
 #Name11 = tk.StringVar()
 #label11 = ttk.Label(root, textvariable = Name11)
 #Name11.set("")
-#label11.pack(pady=2)
+#label11.grid(row=5, column=3, sticky="e")
 
 Name11 = tk.StringVar()
 label11_entry = ttk.Entry(form_frame, textvariable=Name11, state="readonly")
@@ -663,7 +711,7 @@ Name11.trace_add("write", labelNameShow)
 
 ttk.Label(form_frame, text="磁碟機代號", width=width).grid(row=6, column=0, sticky="w")
 Alphabet = tk.StringVar()
-letter_entry = ttk.Entry(form_frame, textvariable=Alphabet)
+letter_entry = ttk.Entry(form_frame, textvariable=Alphabet, width=2)
 letter_entry.grid(row=6, column=1, sticky="w")
 
 letter_hint = ttk.Label(form_frame, text="輸入 A~Z 的單一字母，不可與現有重複")
@@ -684,13 +732,28 @@ letterChecked.trace_add("write", letterNameShow)
 #ttk.Button(root, text="指派磁碟機代號", command=assignLetter).pack(pady=2)
 
 ttk.Label(root, text="磁碟分割清單（Partition）").pack()
-partition_text = tk.Text(root, height=11)#, bg="#000000", fg="#00ff00")
+partition_text = tk.Text(root, height=11, bg="#000000", fg="#00ff00")
 partition_text.pack(fill="x", padx=10)
 
 # 自動引導流程按鈕:
 ttk.Button(root, text="格式化磁碟", command=lambda: run_step_chain([clean, convert, partition, formatCmd, assignLetter])).pack(pady=2)
 
 ttk.Button(root, text="選擇主題顏色", cursor="spraycan", command=change_theme).pack(side=tk.RIGHT, padx=10, pady=2)
+
+# ====== 控制字型的 Combobox ======
+font_box = ttk.Combobox(root, textvariable=font_var, values=available_fonts, state="readonly", width=32)
+font_box.set("新細明體")  # 初始字型
+font_box.pack(side=tk.RIGHT, padx=10, pady=2)
+font_box.bind("<<ComboboxSelected>>", lambda e: change_font_family(font_var.get()))
+
+# ====== 控制字體大小的 Spinbox ======
+size_var = tk.StringVar()#value=str(default_font.cget("size")))
+size_var.set(10)
+spin = ttk.Spinbox(root, from_=6, to=48, textvariable=size_var, width=3, state="readonly")#, command=update_font_size)
+spin.pack(side=tk.RIGHT, padx=10, pady=2)
+
+# 若用者手動輸入數字也要更新字型大小
+#size_var.trace_add("write", lambda *args: change_font_family(font_var.get()))
 
 root.bind("<Button-1>", callback)
 
