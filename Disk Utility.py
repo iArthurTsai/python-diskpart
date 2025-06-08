@@ -524,7 +524,6 @@ def change_theme():
         style.configure("TCheckbutton", background=bg, foreground=fg)
         style.configure("TButton", background=bg)
         
-        
         '''widget_name = "TFrame"
         print(f"\n💡 {widget_name} 可設的靜態樣式屬性（configure）:")
         print(style.configure(widget_name))
