@@ -509,20 +509,23 @@ def change_theme():
         bg = color
         fg = "#ffffff" if is_dark(color) else "#000000"
 
-        # 設定 root 背景
+        # 設定背景
         root.configure(bg=bg)
+        canvas.configure(bg=bg)
 
         style = ttk.Style()
-        
+
+        style.configure("TFrame", background=bg, foreground=fg)
+        style.configure("TLabelframe", background=bg)
+        style.configure("TLabelframe.Label", background=bg, foreground=fg)
         style.configure("TLabel", background=bg, foreground=fg)
         style.configure("TEntry", selectbackground=bg, selectforeground=fg)
         style.configure("TCombobox", selectbackground=bg, selectforeground=fg)
         style.configure("TCheckbutton", background=bg, foreground=fg)
         style.configure("TButton", background=bg)
-        style.configure("TLabelframe", background=bg)
-        style.configure("TLabelframe.Label", background=bg, foreground=fg)
         
-        '''widget_name = "TCombobox"
+        
+        '''widget_name = "TFrame"
         print(f"\n💡 {widget_name} 可設的靜態樣式屬性（configure）:")
         print(style.configure(widget_name))
         print(f"\n📐 {widget_name} 的 layout 結構:")
@@ -535,6 +538,9 @@ def change_theme():
 
         # 遍歷所有 widget
         for widget in root.winfo_children():
+            apply_theme(widget, bg, fg)
+
+        for widget in scrollable_frame.winfo_children():
             apply_theme(widget, bg, fg)
 
 def apply_theme(widget, bg, fg):
@@ -600,31 +606,77 @@ root.iconbitmap(icon_path)
 screen_width = root.winfo_screenwidth()    # 取得螢幕寬度
 screen_height = root.winfo_screenheight()  # 取得螢幕高度
 
-width = 650
-height = 950
+width = 700
+height = 900
 root.resizable(True, True)
 root.minsize(width, height)    # 設定視窗最小值
 left = int((screen_width - width)/2)       # 計算左上 x 座標
 top = int((screen_height - height)/2)      # 計算左上 y 座標
 root.geometry(f"{width}x{height}+{left}+{top}")
 
+# 建立 Canvas 和 Scrollbar
+canvas = tk.Canvas(root, borderwidth=0)
+v_scrollbar = ttk.Scrollbar(root, orient="vertical", command=canvas.yview)
+h_scrollbar = ttk.Scrollbar(root, orient="horizontal", command=canvas.xview)
+
+# scrollable_frame 是裝進 canvas 的 Frame
+scrollable_frame = ttk.Frame(canvas)
+scrollable_frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+
+# 把 scrollable_frame 放進 canvas
+canvas_frame = canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+
+# 🟡 強制 scrollable_frame 的寬度和 canvas 同步，避免多餘空白
+def on_canvas_configure(event):
+    canvas.itemconfig(canvas_frame, width=event.width)
+
+canvas.bind("<Configure>", on_canvas_configure)
+
+# 滑鼠捲動支援
+def _on_mousewheel(event):
+    canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+
+def _on_shift_mousewheel(event):
+    canvas.xview_scroll(int(-1 * (event.delta / 120)), "units")
+
+canvas.bind_all("<MouseWheel>", _on_mousewheel)
+#canvas.bind_all("<MouseWheel>", lambda e: canvas.yview_scroll(int(-1 * e.delta / 120), "units"))
+
+canvas.bind_all("<Shift-MouseWheel>", _on_shift_mousewheel)
+#canvas.bind_all("<Shift-MouseWheel>", lambda e: canvas.xview_scroll(int(-1 * e.delta / 120), "units"))
+
+# Scrollbar 綁定 canvas
+canvas.configure(yscrollcommand=v_scrollbar.set, xscrollcommand=h_scrollbar.set)
+
+# 擺放元件：注意 fill + expand 組合
+#canvas.pack(side="left", fill="both", expand=True)
+#v_scrollbar.pack(side="right", fill="y")
+#h_scrollbar.pack(side="bottom", fill="x")
+canvas.grid(row=0, column=0, sticky="nsew")
+v_scrollbar.grid(row=0, column=1, sticky="ns")
+h_scrollbar.grid(row=1, column=0, sticky="ew")
+
+# 讓 grid 區域自動擴展
+root.grid_rowconfigure(0, weight=1)
+root.grid_columnconfigure(0, weight=1)
+
 # --- 建立字型選單 ---
 available_fonts = (font.families())
 font_var = tk.StringVar()
 
 # 顯示磁碟資訊區域
-ttk.Label(root, text="磁碟清單（Disk）").pack()
-disk_text = tk.Text(root, height=10, bg="#000000", fg="#00ff00")
+ttk.Label(scrollable_frame, text="磁碟清單（Disk）").pack()
+disk_text = tk.Text(scrollable_frame, height=10, bg="#000000", fg="#00ff00")
 disk_text.pack(fill="x", padx=10)
 
-ttk.Label(root, text="磁區清單（Volume）").pack()
-volume_text = tk.Text(root, height=10, bg="#000000", fg="#00ff00")
+ttk.Label(scrollable_frame, text="磁區清單（Volume）").pack()
+volume_text = tk.Text(scrollable_frame, height=10, bg="#000000", fg="#00ff00")
 volume_text.pack(fill="x", padx=10)
 
-ttk.Button(root, text="重新整理磁碟資訊", cursor="exchange", command=refreshLists).pack(pady=2)
+ttk.Button(scrollable_frame, text="重新整理磁碟資訊", cursor="exchange", command=refreshLists).pack(pady=2)
 
 # 格式化選項區
-form_frame = ttk.LabelFrame(root, text="格式化選項")
+form_frame = ttk.LabelFrame(scrollable_frame, text="格式化選項")
 form_frame.pack(fill="x", padx=10)
 
 # 設定 column=1 為可擴展欄位（例如 Entry）
@@ -698,7 +750,7 @@ label_hint = ttk.Label(form_frame, text="限制最多11個字元（UTF-8位元�
 label_hint.grid(row=5, column=2)
 
 #Name11 = tk.StringVar()
-#label11 = ttk.Label(root, textvariable = Name11)
+#label11 = ttk.Label(form_frame, textvariable = Name11)
 #Name11.set("")
 #label11.grid(row=5, column=3, sticky="e")
 
@@ -725,23 +777,23 @@ Alphabet.trace_add("write", letterNameWrite)
 letterChecked.trace_add("write", letterNameShow)
 
 # 操作按鈕:由使用者一個一個按鈕慢慢按
-#ttk.Button(root, text="清除磁碟", command=clean).pack(pady=2)
-#ttk.Button(root, text="轉換磁碟架構", command=convert).pack(pady=2)
-#ttk.Button(root, text="建立磁碟區", command=partition).pack(pady=2)
-#ttk.Button(root, text="格式化", command=formatCmd).pack(pady=2)
-#ttk.Button(root, text="指派磁碟機代號", command=assignLetter).pack(pady=2)
+#ttk.Button(scrollable_frame, text="清除磁碟", command=clean).pack(pady=2)
+#ttk.Button(scrollable_frame, text="轉換磁碟架構", command=convert).pack(pady=2)
+#ttk.Button(scrollable_frame, text="建立磁碟區", command=partition).pack(pady=2)
+#ttk.Button(scrollable_frame, text="格式化", command=formatCmd).pack(pady=2)
+#ttk.Button(scrollable_frame, text="指派磁碟機代號", command=assignLetter).pack(pady=2)
 
-ttk.Label(root, text="磁碟分割清單（Partition）").pack()
-partition_text = tk.Text(root, height=11, bg="#000000", fg="#00ff00")
+ttk.Label(scrollable_frame, text="磁碟分割清單（Partition）").pack()
+partition_text = tk.Text(scrollable_frame, height=11, bg="#000000", fg="#00ff00")
 partition_text.pack(fill="x", padx=10)
 
 # 自動引導流程按鈕:
-ttk.Button(root, text="格式化磁碟", command=lambda: run_step_chain([clean, convert, partition, formatCmd, assignLetter])).pack(pady=2)
+ttk.Button(scrollable_frame, text="格式化磁碟", command=lambda: run_step_chain([clean, convert, partition, formatCmd, assignLetter])).pack(pady=2)
 
-ttk.Button(root, text="選擇主題顏色", cursor="spraycan", command=change_theme).pack(side=tk.RIGHT, padx=10, pady=2)
+ttk.Button(scrollable_frame, text="選擇主題顏色", cursor="spraycan", command=change_theme).pack(side=tk.RIGHT, padx=10, pady=2)
 
 # ====== 控制字型的 Combobox ======
-font_box = ttk.Combobox(root, textvariable=font_var, values=available_fonts, state="readonly", width=32)
+font_box = ttk.Combobox(scrollable_frame, textvariable=font_var, values=available_fonts, state="readonly", width=32)
 font_box.set("新細明體")  # 初始字型
 font_box.pack(side=tk.RIGHT, padx=10, pady=2)
 font_box.bind("<<ComboboxSelected>>", lambda e: change_font_family(font_var.get()))
@@ -749,7 +801,7 @@ font_box.bind("<<ComboboxSelected>>", lambda e: change_font_family(font_var.get(
 # ====== 控制字體大小的 Spinbox ======
 size_var = tk.StringVar()#value=str(default_font.cget("size")))
 size_var.set("10")
-spin = ttk.Spinbox(root, from_=6, to=20, textvariable=size_var, width=3, state="readonly")
+spin = ttk.Spinbox(scrollable_frame, from_=6, to=20, textvariable=size_var, width=3, state="readonly")
 spin.pack(side=tk.RIGHT, padx=10, pady=2)
 
 # 若用者手動輸入數字也要更新字型大小
@@ -761,7 +813,7 @@ x, y = 0, 0
 var = tk.StringVar()
 text = "Mouse location - x:{}, y:{}".format(x,y)
 var.set(text)
-lab = ttk.Label(root, textvariable = var, cursor="mouse")
+lab = ttk.Label(scrollable_frame, textvariable = var, cursor="mouse")
 lab.pack(side=tk.LEFT, padx=10, pady=2)
 root.bind("<Motion>", mouseMotion)
 
