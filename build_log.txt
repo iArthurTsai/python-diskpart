@@ -1,11 +1,11 @@
-99 DEPRECATION: Running PyInstaller as admin is not necessary nor sensible. Run PyInstaller from a non-administrator terminal. PyInstaller 7.0 will block this.
-629 INFO: PyInstaller: 6.13.0, contrib hooks: 2025.4
-629 INFO: Python: 3.8.20
-649 INFO: Platform: Windows-7-6.1.7601-SP1
-649 INFO: Python environment: C:\Users\User\AppData\Local\Programs\Python\Python38
-649 INFO: wrote C:\Users\User\Downloads\app\Disk Utility.spec
-659 INFO: Removing temporary files and cleaning cache in C:\Users\User\AppData\Local\pyinstaller
-669 INFO: Module search paths (PYTHONPATH):
+60 DEPRECATION: Running PyInstaller as admin is not necessary nor sensible. Run PyInstaller from a non-administrator terminal. PyInstaller 7.0 will block this.
+240 INFO: PyInstaller: 6.13.0, contrib hooks: 2025.4
+240 INFO: Python: 3.8.20
+280 INFO: Platform: Windows-7-6.1.7601-SP1
+280 INFO: Python environment: C:\Users\User\AppData\Local\Programs\Python\Python38
+280 INFO: wrote C:\Users\User\Downloads\app\Disk Utility.spec
+280 INFO: Removing temporary files and cleaning cache in C:\Users\User\AppData\Local\pyinstaller
+280 INFO: Module search paths (PYTHONPATH):
 ['C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python38\\Scripts\\pyinstaller.exe',
  'C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python38\\python38.zip',
  'C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python38\\DLLs',
@@ -13,57 +13,56 @@
  'C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python38',
  'C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages',
  'C:\\Users\\User\\Downloads\\app']
-1229 INFO: Appending 'datas' from .spec
-1229 INFO: checking Analysis
-1229 INFO: Building Analysis because Analysis-00.toc is non existent
-1229 INFO: Running Analysis Analysis-00.toc
-1229 INFO: Target bytecode optimization level: 0
-1229 INFO: Initializing module dependency graph...
-1229 INFO: Initializing module graph hook caches...
-1339 INFO: Analyzing modules for base_library.zip ...
-2938 INFO: Processing standard module hook 'hook-encodings.py' from 'C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
-4648 INFO: Processing standard module hook 'hook-pickle.py' from 'C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
-5478 INFO: Processing standard module hook 'hook-heapq.py' from 'C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
-7087 INFO: Caching module dependency graph...
-7117 INFO: Looking for Python shared library...
-7127 INFO: Using Python shared library: C:\Users\User\AppData\Local\Programs\Python\Python38\python38.dll
-7127 INFO: Analyzing C:\Users\User\Downloads\app\Disk Utility.py
-7187 INFO: Processing pre-find-module-path hook 'hook-tkinter.py' from 'C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks\\pre_find_module_path'
-7187 INFO: TclTkInfo: initializing cached Tcl/Tk info...
-7587 INFO: Processing standard module hook 'hook-_tkinter.py' from 'C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
-7677 INFO: Processing module hooks (post-graph stage)...
-7687 INFO: Processing standard module hook 'hook-_tkinter.py' from 'C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
-7697 INFO: Performing binary vs. data reclassification (919 entries)
-14484 INFO: Looking for ctypes DLLs
-14484 INFO: Analyzing run-time hooks ...
-14484 INFO: Including run-time hook 'pyi_rth__tkinter.py' from 'C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks\\rthooks'
-14524 INFO: Creating base_library.zip...
-14574 INFO: Looking for dynamic libraries
-14674 INFO: Extra DLL search directories (AddDllDirectory): []
-14674 INFO: Extra DLL search directories (PATH): []
-15004 INFO: Warnings written to C:\Users\User\Downloads\app\build\Disk Utility\warn-Disk Utility.txt
-15024 INFO: Graph cross-reference written to C:\Users\User\Downloads\app\build\Disk Utility\xref-Disk Utility.html
-15094 INFO: checking PYZ
-15094 INFO: Building PYZ because PYZ-00.toc is non existent
-15094 INFO: Building PYZ (ZlibArchive) C:\Users\User\Downloads\app\build\Disk Utility\PYZ-00.pyz
-15274 INFO: Building PYZ (ZlibArchive) C:\Users\User\Downloads\app\build\Disk Utility\PYZ-00.pyz completed successfully.
-15314 INFO: checking PKG
-15314 INFO: Building PKG because PKG-00.toc is non existent
-15314 INFO: Building PKG (CArchive) Disk Utility.pkg
-17543 INFO: Building PKG (CArchive) Disk Utility.pkg completed successfully.
-17553 INFO: Bootloader C:\Users\User\AppData\Local\Programs\Python\Python38\lib\site-packages\PyInstaller\bootloader\Windows-64bit-intel\runw.exe
-17553 INFO: checking EXE
-17553 INFO: Building EXE because EXE-00.toc is non existent
-17553 INFO: Building EXE from EXE-00.toc
-17553 INFO: Copying bootloader EXE to C:\Users\User\Downloads\app\dist\Disk Utility.exe
-17563 INFO: Copying icon to EXE
-18413 INFO: Copying 0 resources to EXE
-18413 INFO: Embedding manifest in EXE
-21042 INFO: Appending PKG archive to EXE
-21092 INFO: Fixing EXE headers
-22472 WARNING: Execution of 'set_exe_build_timestamp' failed on attempt #1 / 20: PermissionError(13, 'Permission denied'). Retrying in 0.05 second(s)...
-23401 WARNING: Execution of 'set_exe_build_timestamp' failed on attempt #2 / 20: PermissionError(13, 'Permission denied'). Retrying in 0.06 second(s)...
-24291 WARNING: Execution of 'set_exe_build_timestamp' failed on attempt #3 / 20: PermissionError(13, 'Permission denied'). Retrying in 0.06 second(s)...
-25251 WARNING: Execution of 'set_exe_build_timestamp' failed on attempt #4 / 20: PermissionError(13, 'Permission denied'). Retrying in 0.06 second(s)...
-29669 INFO: Building EXE from EXE-00.toc completed successfully.
-29689 INFO: Build complete! The results are available in: C:\Users\User\Downloads\app\dist
+880 INFO: Appending 'datas' from .spec
+880 INFO: checking Analysis
+880 INFO: Building Analysis because Analysis-00.toc is non existent
+880 INFO: Running Analysis Analysis-00.toc
+880 INFO: Target bytecode optimization level: 0
+880 INFO: Initializing module dependency graph...
+880 INFO: Initializing module graph hook caches...
+930 INFO: Analyzing modules for base_library.zip ...
+2340 INFO: Processing standard module hook 'hook-encodings.py' from 'C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+3580 INFO: Processing standard module hook 'hook-pickle.py' from 'C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+4070 INFO: Processing standard module hook 'hook-heapq.py' from 'C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+4290 INFO: Caching module dependency graph...
+4330 INFO: Looking for Python shared library...
+4340 INFO: Using Python shared library: C:\Users\User\AppData\Local\Programs\Python\Python38\python38.dll
+4340 INFO: Analyzing C:\Users\User\Downloads\app\Disk Utility.py
+4380 INFO: Processing pre-find-module-path hook 'hook-tkinter.py' from 'C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks\\pre_find_module_path'
+4380 INFO: TclTkInfo: initializing cached Tcl/Tk info...
+4660 INFO: Processing standard module hook 'hook-_tkinter.py' from 'C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+4700 INFO: Processing module hooks (post-graph stage)...
+4700 INFO: Processing standard module hook 'hook-_tkinter.py' from 'C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+4710 INFO: Performing binary vs. data reclassification (919 entries)
+4790 INFO: Looking for ctypes DLLs
+4790 INFO: Analyzing run-time hooks ...
+4790 INFO: Including run-time hook 'pyi_rth__tkinter.py' from 'C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+4830 INFO: Creating base_library.zip...
+4880 INFO: Looking for dynamic libraries
+5030 INFO: Extra DLL search directories (AddDllDirectory): []
+5030 INFO: Extra DLL search directories (PATH): []
+5330 INFO: Warnings written to C:\Users\User\Downloads\app\build\Disk Utility\warn-Disk Utility.txt
+5350 INFO: Graph cross-reference written to C:\Users\User\Downloads\app\build\Disk Utility\xref-Disk Utility.html
+5380 INFO: checking PYZ
+5380 INFO: Building PYZ because PYZ-00.toc is non existent
+5380 INFO: Building PYZ (ZlibArchive) C:\Users\User\Downloads\app\build\Disk Utility\PYZ-00.pyz
+5560 INFO: Building PYZ (ZlibArchive) C:\Users\User\Downloads\app\build\Disk Utility\PYZ-00.pyz completed successfully.
+5600 INFO: checking PKG
+5600 INFO: Building PKG because PKG-00.toc is non existent
+5600 INFO: Building PKG (CArchive) Disk Utility.pkg
+7720 INFO: Building PKG (CArchive) Disk Utility.pkg completed successfully.
+7740 INFO: Bootloader C:\Users\User\AppData\Local\Programs\Python\Python38\lib\site-packages\PyInstaller\bootloader\Windows-64bit-intel\runw.exe
+7740 INFO: checking EXE
+7740 INFO: Building EXE because EXE-00.toc is non existent
+7740 INFO: Building EXE from EXE-00.toc
+7740 INFO: Copying bootloader EXE to C:\Users\User\Downloads\app\dist\Disk Utility.exe
+7750 INFO: Copying icon to EXE
+7750 INFO: Copying 0 resources to EXE
+7750 INFO: Embedding manifest in EXE
+8120 INFO: Appending PKG archive to EXE
+8190 INFO: Fixing EXE headers
+9740 WARNING: Execution of 'set_exe_build_timestamp' failed on attempt #1 / 20: PermissionError(13, 'Permission denied'). Retrying in 0.05 second(s)...
+10670 WARNING: Execution of 'set_exe_build_timestamp' failed on attempt #2 / 20: PermissionError(13, 'Permission denied'). Retrying in 0.06 second(s)...
+11580 WARNING: Execution of 'set_exe_build_timestamp' failed on attempt #3 / 20: PermissionError(13, 'Permission denied'). Retrying in 0.06 second(s)...
+14830 INFO: Building EXE from EXE-00.toc completed successfully.
+14850 INFO: Build complete! The results are available in: C:\Users\User\Downloads\app\dist
