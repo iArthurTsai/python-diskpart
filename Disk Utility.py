@@ -22,12 +22,30 @@ if not is_admin():
     sys.exit()
 
 # --- 初始化 ---
-print(tk.TkVersion)
 
 if hasattr(sys, "_MEIPASS"):
     icon_path = os.path.join(sys._MEIPASS, "Disk Utility.ico")
 else:
     icon_path = "Disk Utility.ico"
+
+#GUI
+root = tk.Tk()
+root.title("Disk Utility")
+root.iconbitmap(icon_path)
+
+screen_width = root.winfo_screenwidth()    # 取得螢幕寬度
+screen_height = root.winfo_screenheight()  # 取得螢幕高度
+
+width = 700
+height = 900
+root.resizable(True, True)
+root.minsize(width, height)    # 設定視窗最小值
+left = int((screen_width - width)/2)       # 計算左上 x 座標
+top = int((screen_height - height)/2)      # 計算左上 y 座標
+root.geometry(f"{width}x{height}+{left}+{top}")
+
+print(tk.TkVersion)
+
 TEMP_DIR = os.path.dirname(os.path.abspath(__file__))
 DISKPART_OUTPUT = os.path.join(TEMP_DIR, "diskpart_output.txt")
 
@@ -186,11 +204,12 @@ def listPartition():
     return result, valid_partitions  # 回傳原始輸出與可用編號
 
 # --- 更新顯示區域 ---
-def refreshLists():
+def refreshLists(event=None):
     run_diskpart([f"rescan"])
-    disk_output, _ = listDisk()
+    disk_output, valid_disks = listDisk()
     disk_text.delete(1.0, tk.END)
     disk_text.insert(tk.END, disk_output)
+    disk_entry["values"] = valid_disks
     volume_output, _ = listVolume()
     volume_text.delete(1.0, tk.END)
     volume_text.insert(tk.END, volume_output)
@@ -598,20 +617,6 @@ def apply_font(widget, new_font):
         apply_font(child, new_font)
 
 # --- GUI 建構 ---
-root = tk.Tk()
-root.title("Disk Utility")
-root.iconbitmap(icon_path)
-
-screen_width = root.winfo_screenwidth()    # 取得螢幕寬度
-screen_height = root.winfo_screenheight()  # 取得螢幕高度
-
-width = 700
-height = 900
-root.resizable(True, True)
-root.minsize(width, height)    # 設定視窗最小值
-left = int((screen_width - width)/2)       # 計算左上 x 座標
-top = int((screen_height - height)/2)      # 計算左上 y 座標
-root.geometry(f"{width}x{height}+{left}+{top}")
 
 # 建立 Canvas 和 Scrollbar
 canvas = tk.Canvas(root, borderwidth=0)
@@ -697,6 +702,9 @@ disk_hint.grid(row=0, column=2)
 diskChecked = tk.StringVar()
 disk_entry_checked = ttk.Entry(form_frame, textvariable=diskChecked, state="readonly")
 disk_entry_checked.grid(row=0, column=3, sticky="e")
+
+disk_entry.bind("<Button-1>", refreshLists)  # 滑鼠點開時更新
+disk_entry.bind("<FocusIn>", refreshLists)   # 鍵盤 Tab 進入時也更新
 
 Disk.trace_add("write", diskNumberWrite)
 diskChecked.trace_add("write", diskNumberShow)
